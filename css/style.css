@@ -19,30 +19,40 @@ body{
 
 /* MICRO CSS STYLESHEET */
 /* Components:
-*  Main Container    id    ahrs_container
-*  Scroll Precvent   id    scroll_prevent
-*  Sky Container     id    sky_container
-*  Sky Mask          id    sky_mask
+*  Readible Name  ID/Class  Level  micro_name
+*  Main Workspace     id    0   micro_workspace
+*  Horizontal region  id    1   micro_horizontal
+*  Left Bar           id    2   micro_leftBar
+*  Right Bar (root)   id    2   micro_rightBar
+*  Right Bar (top)    id    3   micro_rightTop
+*  Right Bar (bottom) id    3   micro_rightBottom
+*  Footer region      id    1   micro_footer
+
 ***  OTHER  ***
 *  No Select         class noselect
 */
 
+/* Examples
+*Applies to all spans under micro_mainHolder
+#micro_workspace span{
 
-#micro_mainHolder{
+}
+
+*Applies to all classes under micro_mainHolder
+#micro_workspace .className{
+}
+*/
+
+#micro_workspace{
   width: 100%;
   height: 900px;
   position: relative;
   background-color: #FF0000;
 }
 
-/* Applies to all spans under micro_mainHolder */
-#micro_mainHolder span{
-
-}
-
-/* Applies to all classes under micro_mainHolder */
-#micro_mainHolder .className{
-
+#micro_horizontal{
+  width: 100%;
+  height: 100%;
 }
 
 #micro_leftBar{
@@ -70,8 +80,10 @@ body{
   height: 50%;
 }
 
-
-
+#micro_footer {
+  background-color: #000FFF;
+  height: 25px;
+}
 
 
 #scroll_prevent{
