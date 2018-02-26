@@ -1,0 +1,102 @@
+@charset "UTF-8";
+
+@font-face {
+  font-family: 'Monaco';
+  src: url('../fonts/monaco.ttf');
+}
+
+html{
+
+}
+
+span{
+
+}
+
+body{
+
+}
+
+/* MICRO CSS STYLESHEET */
+/* Components:
+*  Main Container    id    ahrs_container
+*  Scroll Precvent   id    scroll_prevent
+*  Sky Container     id    sky_container
+*  Sky Mask          id    sky_mask
+***  OTHER  ***
+*  No Select         class noselect
+*/
+
+
+#micro_mainHolder{
+  width: 100%;
+  height: 900px;
+  position: relative;
+  background-color: #FF0000;
+  display: inline-grid;
+}
+
+/* Applies to all spans under micro_mainHolder */
+#micro_mainHolder span{
+
+}
+
+/* Applies to all classes under micro_mainHolder */
+#micro_mainHolder .className{
+
+}
+
+#micro_leftBar{
+  background-color: #FFFF00;
+  width: 200px;
+  height: 100%;
+}
+
+#micro_rightBar{
+  width: 600px;
+  height: 100%;
+  float: right;
+}
+
+#micro_rightTop{
+  background-color: #00FF00;
+  width: 100%;
+  height: 50%;
+}
+
+#micro_rightBottom{
+  background-color: #FF00FF;
+  width: 100%;
+  height: 50%;
+}
+
+
+
+
+
+#scroll_prevent{
+  background-color: #FFF;
+}
+
+/* ******* OTHER ******* */
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+  -khtml-user-select: none; /* Konqueror HTML */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Non-prefixed version, currently
+  supported by Chrome and Opera */
+}
+
+/* Changes css items based on media actions */
+@media (orientation: portrait) {
+  #scroll_prevent {
+    -webkit-transform: rotate(90deg);
+    -moz-transform: rotate(90deg);
+    -o-transform: rotate(90deg);
+    -ms-transform: rotate(90deg);
+    transform: rotate(90deg);
+  }
+}
