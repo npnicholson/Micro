@@ -33,7 +33,6 @@ body{
   height: 900px;
   position: relative;
   background-color: #FF0000;
-  display: inline-grid;
 }
 
 /* Applies to all spans under micro_mainHolder */
@@ -48,12 +47,13 @@ body{
 
 #micro_leftBar{
   background-color: #FFFF00;
-  width: 200px;
+  width: 25%;
   height: 100%;
+  float: left;
 }
 
 #micro_rightBar{
-  width: 600px;
+  width: 75%;
   height: 100%;
   float: right;
 }
