@@ -128,10 +128,10 @@ function Micro(workspace_div){
 
     // Remove the elements that are there now
     // This line removes the resize handle as well.
-    $('#micro_leftBar').html('');
+    $('#micro_leftBarContent').html('');
 
     // Add the unordered list that will contain the top level files and folders.
-    let top_level = $('#micro_leftBar');
+    let top_level = $('#micro_leftBarContent');
     // Temp recursive function that will dig into the file tree and create nested list elements
     var fileDelve = function(current, parent){
       Object.entries(current).forEach(([key, val]) => {
