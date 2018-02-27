@@ -119,6 +119,12 @@ function Micro(workspace_div){
     // Remove the elements that are there now
     $('#micro_leftBar').html('');
 
+    // Add the unordered list that will contain the top level files and folders.
+    //$('#micro_leftBar').append("<ul id='trew-view-directory'></ul>");
+    //for (cnt = 0; cnt < someList.length; cnt++) {
+    //  $("#newList").append("<li>"+someList[cnt].FirstName + ":" + someList[cnt].LastName+"</li>");
+    //}
+
 
     console.log(this.file_tree);
 
