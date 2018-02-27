@@ -135,21 +135,24 @@ function Micro(workspace_div){
       var layers = [];
       Object.entries(current).forEach(([key, val]) => {
         let current_layer = $("<li>"+key+"</li>");
-        layers.push({html:current_layer, type:val.type});
+        layers.push({html:current_layer, type:val.type, name:key});
         if(val.type !== "file"){
           fileDelve(val, $("<ul></ul>").appendTo(current_layer));
         }
       });
+      let dirs = []
+      let files = [];
       for(let i = 0; i < layers.length; i++){
-        if(layers[i].type !== "file"){
-          parent.append(layers[i].html);
-        }
+        if(layers[i].type !== "file")
+          dirs.push(layers[i]);
       }
       for(let i = 0; i < layers.length; i++){
-        if(layers[i].type === "file"){
-          parent.append(layers[i].html);
-        }
+        if(layers[i].type === "file")
+          files.push(layers[i]);
       }
+      
+
+      //parent.append(layers[i].html);
     }
     fileDelve(this.file_tree, $("<ul></ul>").appendTo(top_level));
   }
