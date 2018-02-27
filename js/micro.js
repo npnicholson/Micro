@@ -124,19 +124,32 @@ function Micro(workspace_div){
 
     // Remove the elements that are there now
     // This line removes the resize handle as well.
-    $('#micro_leftBar').html('');
+    let top_level = $('#micro_leftBar');
+    top_level.html('');
 
     // Add the unordered list that will contain the top level files and folders.
-    let top_level = $('#micro_leftBar');
+
     // Temp recursive function that will dig into the file tree and create nested list elements
     //TODO: Add sorting so dirs are at the top
     var fileDelve = function(current, parent){
+      var layers = [];
       Object.entries(current).forEach(([key, val]) => {
-        let current_layer = $("<li>"+key+"</li>").appendTo(parent);
+        let current_layer = $("<li>"+key+"</li>");
+        layers.push({html:current_layer, type:val.type});
         if(val.type !== "file"){
           fileDelve(val, $("<ul></ul>").appendTo(current_layer));
         }
       });
+      for(let i = 0; i < layers.length; i++){
+        if(layers[i].type !== "file"){
+          parent.append(layers[i].html);
+        }
+      }
+      for(let i = 0; i < layers.length; i++){
+        if(layers[i].type === "file"){
+          parent.append(layers[i].html);
+        }
+      }
     }
     fileDelve(this.file_tree, $("<ul></ul>").appendTo(top_level));
   }
