@@ -1,5 +1,15 @@
+var micro;
+
 $( document ).ready(function(){
   console.log("JS Init");
-  //$('#micro_rightTop').html('Hello World');
-  $('#micro_rightTop').css('color','blue');
+
+  // Create new Micro object
+  micro = new Micro($('#micro_workspace'));
+
+  // Set resize handle
+  $(window).resize(function(){
+    micro.updateSize();
+  });
+
+
 });
