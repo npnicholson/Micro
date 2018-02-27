@@ -1,7 +1,13 @@
+var micro_count = 0;
+
 /* Micro Framework
  * Returns a new micro object, ready to be assigned to a div and configured
  */
 function Micro(workspace_div){
+  if(micro_count > 0){
+    console.error("To many Micro's have been created: 1 Max");
+    return;
+  }
 
   this.workspace = workspace_div;
 
@@ -118,22 +124,25 @@ function Micro(workspace_div){
 
     // Remove the elements that are there now
     // This line removes the resize handle as well.
-    // Uncommented for merge
-    // $('#micro_leftBar').html('');
+    $('#micro_leftBar').html('');
 
     // Add the unordered list that will contain the top level files and folders.
-    //$('#micro_leftBar').append("<ul id='trew-view-directory'></ul>");
-    //for (cnt = 0; cnt < someList.length; cnt++) {
-    //  $("#newList").append("<li>"+someList[cnt].FirstName + ":" + someList[cnt].LastName+"</li>");
-    //}
-
-
-    console.log(this.file_tree);
-
+    let top_level = $('#micro_leftBar');
+    // Temp recursive function that will dig into the file tree and create nested list elements
+    var fileDelve = function(current, parent){
+      Object.entries(current).forEach(([key, val]) => {
+        let current_layer = $("<li>"+key+"</li>").appendTo(parent);
+        if(val.type !== "file"){
+          fileDelve(val, $("<ul></ul>").appendTo(current_layer));
+        }
+      });
+    }
+    fileDelve(this.file_tree, $("<ul></ul>").appendTo(top_level));
   }
 
   /****************** initialization ******************/
 
 
+  micro_count ++;
   return this;
 }
