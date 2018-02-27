@@ -129,6 +129,7 @@ function Micro(workspace_div){
     // Add the unordered list that will contain the top level files and folders.
     let top_level = $('#micro_leftBar');
     // Temp recursive function that will dig into the file tree and create nested list elements
+    //TODO: Add sorting so dirs are at the top
     var fileDelve = function(current, parent){
       Object.entries(current).forEach(([key, val]) => {
         let current_layer = $("<li>"+key+"</li>").appendTo(parent);
