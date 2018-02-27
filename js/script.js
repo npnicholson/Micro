@@ -9,9 +9,9 @@ $( document ).ready(function(){
   micro = new Micro($('#micro_workspace'));
 
   // Set resize handle
-  // $(window).resize(function(){
-  //   micro.updateSize();
-  // });
+  $(window).resize(function(){
+    micro.updateSize();
+  });
 
 
   // Resize Handle - Left and Right Panes
