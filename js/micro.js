@@ -8,12 +8,62 @@ function Micro(workspace_div){
   // Get system information
   this.system = getSystemInformation();
 
+  /**************** Personal Functions ****************/
+
   /* UpdateSize
    * Call to update the window size.
    */
   this.updateSize = function(){
     console.log("Window size change");
   }
+
+  /* SetGetFileTree - Public
+   * Sets the function that will be called when Micro needs a file tree.
+   * Expected to return a nested Object Tree.
+   * :: function()
+   * TODO: Make this defination more explicate.
+   */
+  this.setGetFileTree = function(handle){
+    this.getFileTree = handle;
+  }
+
+  /* SetGetFile - Public
+   * Sets the function that will be called when Micro needs a file.
+   * Expected to return an Object.
+   * :: function(fileName)
+   * TODO: Make this defination more explicate.
+   */
+  this.setGetFile = function(handle){
+    this.getFile = handle;
+  }
+
+  /* SetSaveFile  - Public
+   * Sets the function that will be called when Micro needs a file tree.
+   * Expected to return a nested JSON.
+   * TODO: Make this defination more explicate.
+   */
+  this.setSaveFile = function(handle){
+    this.saveFile = handle;
+  }
+
+  /* ReportError  - Public
+   * Reports an error to Micro to be displayed to the user
+   * TODO: Make this actually do something.
+   */
+  this.reportError = function(error){
+    console.error(error);
+  }
+
+  /* UpdateFileTreeSidebar  - Private
+   * Updates the sidebar to include the current files and directories
+   */
+  this.updateFileTreeSidebar(){
+    
+  }
+
+  /****************** initialization ******************/
+
+
 
   return this;
 }
