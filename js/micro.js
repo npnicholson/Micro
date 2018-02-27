@@ -117,7 +117,9 @@ function Micro(workspace_div){
     // Create the DOM in the side bar
 
     // Remove the elements that are there now
-    $('#micro_leftBar').html('');
+    // This line removes the resize handle as well.
+    // Uncommented for merge
+    // $('#micro_leftBar').html('');
 
 
     console.log(this.file_tree);

@@ -70,7 +70,7 @@ $( document ).ready(function(){
       $(document).unbind('mousemove');
       let top = $('#micro_rightBar')[0].offsetTop;
       var percentage = (e.pageY - top) / ($('#micro_rightBar')[0].offsetHeight + top) * 100;
-      
+
       if (percentage > 100)
         percentage = 100;
       else if (percentage < 0)
