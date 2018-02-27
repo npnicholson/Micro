@@ -15,7 +15,7 @@ $( document ).ready(function(){
 
 
   // Resize Handle - Left and Right Panes
-  $('#main_dragBarVertical').mousedown(function(e){
+  $('#micro_dragBarVertical').mousedown(function(e){
     e.preventDefault();
     dragging = 'vertical';
     $(document).unbind('mousemove');
@@ -48,7 +48,7 @@ $( document ).ready(function(){
   });
 
   // Resize Handle - Right top and bottom Panes
-  $('#main_dragBarHorizontal').mousedown(function(e){
+  $('#micro_dragBarHorizontal').mousedown(function(e){
     e.preventDefault();
     dragging = 'horizontal';
     $(document).unbind('mousemove');

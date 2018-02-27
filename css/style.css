@@ -16,13 +16,17 @@ body{
 /* MICRO CSS STYLESHEET */
 /* Components:
 *  Readible Name  ID/Class  Level  micro_name
-*  Main Workspace     id    0   micro_workspace
-*  Header region      id    1   micro_header
-*  Horizontal region  id    1   micro_horizontal
-*  Left Bar           id    2   micro_leftBar
-*  Right Bar (root)   id    2   micro_rightBar
-*  Right Bar (top)    id    3   micro_rightTop
-*  Right Bar (bottom) id    3   micro_rightBottom
+*  Main Workspace          id    0   micro_workspace
+*  Header region           id    1   micro_header
+*  Horizontal region       id    1   micro_horizontal
+*  Left Bar                id    2   micro_leftBar
+*  Vertical Resize         id    2   micro_dragBarVertical
+*  Left Bar Content        id    3   micro_leftBarContent
+*  Right Bar (root)        id    2   micro_rightBar
+*  Right Bar (top)         id    3   micro_rightTop
+*  Right Bar (bottom)      id    3   micro_rightBottom
+*  Horizontal Resize       id    3   micro_dragBarHorizontal
+*  Right Bar (bot Content) id    4   micro_rightBottomContent
 *  Footer region      id    1   micro_footer
 
 ***  OTHER  ***
@@ -65,7 +69,12 @@ body{
   float: left;
 }
 
-#main_dragBarVertical {
+#micro_leftBarContent{
+  width: 100%
+  height: 100%
+}
+
+#micro_dragBarVertical {
   background-color:black;
   height:100%;
   float: right;
@@ -87,7 +96,7 @@ body{
   min-height: 20px;
 }
 
-#main_dragBarHorizontal {
+#micro_dragBarHorizontal {
   background-color:black;
   width:100%;
   height: 2px;
@@ -100,6 +109,11 @@ body{
   width: 100%;
   height: 50%;
   min-height: 20px;
+}
+
+#micro_rightBottomContent{
+  width: 100%
+  height: 100%
 }
 
 #micro_footer {
