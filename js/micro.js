@@ -57,8 +57,8 @@ function Micro(workspace_div){
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
    */
-  this.updateFileTreeSidebar(){
-    
+  this.updateFileTreeSidebar = function(){
+
   }
 
   /****************** initialization ******************/
