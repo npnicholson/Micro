@@ -21,6 +21,7 @@ body{
 /* Components:
 *  Readible Name  ID/Class  Level  micro_name
 *  Main Workspace     id    0   micro_workspace
+*  Header region      id    1   micro_header
 *  Horizontal region  id    1   micro_horizontal
 *  Left Bar           id    2   micro_leftBar
 *  Right Bar (root)   id    2   micro_rightBar
@@ -48,6 +49,11 @@ body{
   height: 900px;
   position: relative;
   background-color: #FF0000;
+}
+
+#micro_header{
+  background-color: #0D0FD0;
+  height: 25px;
 }
 
 #micro_horizontal{
