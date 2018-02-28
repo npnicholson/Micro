@@ -13,6 +13,8 @@ $( document ).ready(function(){
     micro.updateSize();
   });
 
+  
+
   // Populate some file IO simulation functions
   micro.setGetFileTree(function(){
     files = [];
