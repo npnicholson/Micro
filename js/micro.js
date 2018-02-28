@@ -6,7 +6,6 @@ var micro_count = 0;
 
 // System variables
 var dragging = 'none';
-
 function Micro(workspace_div){
   if(micro_count > 0){
     console.error("To many Micro's have been created: 1 Max");
@@ -69,7 +68,7 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  this.openFile = function(filename){
+  var openFile = function(filename){
     console.log("OpenFile: " + filename);
   }
 
@@ -138,6 +137,9 @@ function Micro(workspace_div){
     let top_level = $('#micro_leftBarContent');
     top_level.html('');
 
+    // Index for refering to divs after they are placed
+    var indexCounter = 0;
+
     // Add the unordered list that will contain the top level files and folders.
     // Temp recursive function that will dig into the file tree and create nested list elements
     var fileDelve = function(current, parent){
@@ -148,7 +150,14 @@ function Micro(workspace_div){
         // Create a list item for the current layer
         let current_layer = $('<li class="micro_file_element"></li>');
         // Create a title header for the current layer and append it
-        $('<div class="micro_file_head" data_path="'+val.path+'"><span class="micro_file_head_text">'+key+'</span></div>').appendTo(current_layer);
+        let text = $('<span class="micro_file_head_text">'+key+'<span>');
+        let icon_holder = $('<div class="micro_file_head_title"></div>');
+        let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
+        icon_holder.append(text);
+        head.append(icon_holder)
+        current_layer.append(head);
+        // Add to the index counter
+        indexCounter++;
         // Push the current layer to the layer array, with some added information for ease
         layers.push({html:current_layer, type:val.type, name:key, path:val.path});
         // If the current layer is a directory, create an unordered list and add it
@@ -180,19 +189,42 @@ function Micro(workspace_div){
       dirs.sort(sFunct);
       // Loop through all directories and add them to the DOM
       for(let i = 0; i < dirs.length; i++){
+        // Get the head and save it for easy use
+        let head = dirs[i].html.children('.micro_file_head');
         // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
-        dirs[i].html.addClass('octicon file_handle')
-        dirs[i].html.children('.micro_file_head').addClass('octicon octicon-file-directory');
+        head.children('.micro_file_head_title').addClass('octicon octicon-file-directory');
+        head.children('.micro_file_head_title').append('<span class="file_handle"></span>');
+        // Create the mousedown callback for this menu item
+        dirs[i].html.children('.micro_file_head').mousedown(function(){
+          // TODO: Add toggle code in here
+          setHighlight(head);
+        });
+        // Add this element to the base DOM
         base.append(dirs[i].html);
       }
       // Loop through all files and add them to the DOM
       for(let i = 0; i < files.length; i++){
-        files[i].html.children('.micro_file_head').addClass(getIconType(files[i].path));
+        // Get the head and save it for easy use
+        let head = files[i].html.children('.micro_file_head');
+        // Add the icon to the title div
+        head.children('.micro_file_head_title').addClass(getIconType(files[i].path));
+        // Create the mousedown callback for this menu item
+        files[i].html.children('.micro_file_head').mousedown(function(){
+          openFile(files[i].path);
+          setHighlight(head);
+        });
+        // Add this element to the base DOM
         base.append(files[i].html);
       }
     }
     // Enter the recursive function and add all files to the DOM
     fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(top_level));
+  }
+
+  var setHighlight = function(element){
+    //let index = calculateFileOrder(path);
+    $('.micro_file_head').removeClass('selected bright')
+    element.addClass('selected bright');
   }
 
   /****************** initialization ******************/

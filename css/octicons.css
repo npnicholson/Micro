@@ -42,8 +42,8 @@
 
 .file_handle::before{
   content:"\f0a3";
-  left: -10px;
-  top:2px;
+  left: -59px;
+  top: 1px;
   position: absolute;
   font-size: 12px;
 }
