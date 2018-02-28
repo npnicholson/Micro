@@ -35,6 +35,7 @@
   speak: none;
 }
 
+/* Used for file tree icons */
 .file_handle{
   position:relative;
 }
