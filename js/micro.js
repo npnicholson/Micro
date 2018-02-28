@@ -69,7 +69,7 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  this.openFile(filename){
+  this.openFile = function(filename){
     console.log("OpenFile: " + filename);
   }
 

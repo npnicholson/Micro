@@ -70,9 +70,9 @@ ul{
 
 #micro_editorTabBar li{
     float: left;
-
     width: var(--micro_editorTabWidth);
-    min-width: 75px;
+    min-width: 115px;
+    max-width: 200px;
     border-left: 1px solid #181a1f;
     box-shadow: inset 0 -1px 0 #181a1f;
     color: rgba(157, 165, 180, 0.6);
@@ -80,6 +80,9 @@ ul{
 
 #micro_editorTabBar li:first-child{
   border-left-color: transparent;
+}
+#micro_editorTabBar li:last-child{
+  border-right: 1px solid #181a1f;
 }
 
 #micro_editorTabBar li > div{
@@ -98,7 +101,7 @@ ul{
   width: 100%;
   height: 400px;
   position: relative;
-  background-color: #FF0000;
+  background-color: #181a1f;
 }
 
 #micro_header{
@@ -154,7 +157,7 @@ ul{
   padding: 0;
   overflow: hidden;
   display:flex;
-  /* box-shadow: inset 0 -1px 0 black; */
+  box-shadow: inset 0 -1px 0 #181a1f;
 }
 
 #micro_dragBarHorizontal {
