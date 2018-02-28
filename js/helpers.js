@@ -37,3 +37,22 @@ function getSystemInformation(){
   }
   return output;
 }
+
+function getIconType(file){
+  let re = /(?:\.([^.]+))?$/;
+  switch(re.exec(file)[1]){
+    default:
+    case "txt":
+      return 'octicon octicon-file-text';
+    case undefined:
+      return 'octicon octicon-file-directory';
+    case "js":
+    case "tl":
+    case "java":
+    case "cpp":
+    case "c":
+      return 'octicon octicon-file-code';
+    case "class":
+      return 'octicon octicon-file-binary';
+  }
+}

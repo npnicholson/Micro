@@ -124,7 +124,7 @@ function Micro(workspace_div){
       depth ++;
     }
 
-    // Create the DOM in the side bar
+    // Create the DOM in the side bar //
 
     // Remove the elements that are there now
     // This line removes the resize handle as well.
@@ -132,37 +132,60 @@ function Micro(workspace_div){
     top_level.html('');
 
     // Add the unordered list that will contain the top level files and folders.
-
     // Temp recursive function that will dig into the file tree and create nested list elements
-    //TODO: Add sorting so dirs are at the top
     var fileDelve = function(current, parent){
+      // Init an empty array for layers
       var layers = [];
+      // Loop through every object in our current layer of the file tree
       Object.entries(current).forEach(([key, val]) => {
-        let current_layer = $("<li>"+key+"</li>");
-        layers.push({html:current_layer, type:val.type, name:key});
-        if(val.type !== "file"){
-          fileDelve(val, $("<ul></ul>").appendTo(current_layer));
-        }
+        // Create a list item for the current layer
+        let current_layer = $('<li class="micro_file_element"></li>');
+        // Create a title header for the current layer and append it
+        $('<div class="micro_file_head" data_path="'+val.path+'"><span class="micro_file_head_text">'+key+'</span></div>').appendTo(current_layer);
+        // Push the current layer to the layer array, with some added information for ease
+        layers.push({html:current_layer, type:val.type, name:key, path:val.path});
+        // If the current layer is a directory, create an unordered list and add it
+        if(val.type !== "file")
+          fileDelve(val, $('<ul></ul>').appendTo(current_layer));
       });
+      // Initialize some arrays to hold directories and files
       let dirs = []
       let files = [];
-      for(let i = 0; i < layers.length; i++){
-        if(layers[i].type !== "file"){
+      // Add a children div to hold children elements. Make hiding easier.
+      let base = $('<div class="micro_file_children"></div>');
+      parent.append(base);
+      // Loop through the layer and find all directories and add them to the dir array
+
+      for(let i = 0; i < layers.length; i++)
+        if(layers[i].type !== "file")
           dirs.push(layers[i]);
-          parent.append(layers[i].html);
-        }
-      }
-      for(let i = 0; i < layers.length; i++){
-        if(layers[i].type === "file"){
+      // Loop through the layer and find all files and add them to the UpdateFileTreeSidebar array
+      for(let i = 0; i < layers.length; i++)
+        if(layers[i].type === "file")
           files.push(layers[i]);
-          parent.append(layers[i].html);
-        }
+      // Generate a sort function that will alphabeticaly sort the files and dirs
+      let sFunct = function(a,b){
+        return a.name.localeCompare(b.name);
       }
 
-
-
+      // Sort the files and dirs
+      files.sort(sFunct);
+      dirs.sort(sFunct);
+      // Loop through all directories and add them to the DOM
+      for(let i = 0; i < dirs.length; i++){
+        // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
+        dirs[i].html.addClass('octicon octicon-chevron-down')
+        dirs[i].html.children('.micro_file_head').addClass('octicon octicon-file-directory');
+        base.append(dirs[i].html);
+      }
+      // Loop through all files and add them to the DOM
+      for(let i = 0; i < files.length; i++){
+        files[i].html.children('.micro_file_head').addClass(getIconType(files[i].path));
+        base.append(files[i].html);
+      }
     }
-    fileDelve(this.file_tree, $("<ul></ul>").appendTo(top_level));
+    // Enter the recursive function and add all files to the DOM
+    fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(top_level));
   }
 
   /****************** initialization ******************/

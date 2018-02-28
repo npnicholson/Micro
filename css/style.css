@@ -4,6 +4,17 @@
   font-family: 'Monaco';
   src: url('../fonts/monaco.ttf');
 }
+.octicon {
+  display: inline-block;
+  vertical-align: text-top;
+  fill: currentColor;
+}
+
+
+/*
+font-family: 'Open Sans', sans-serif;
+font-family: 'Roboto', sans-serif;
+*/
 
 html{
 
@@ -13,9 +24,13 @@ body{
 
 }
 
+ul{
+  list-style-type: none;
+}
+
 /* MICRO CSS STYLESHEET */
 /* Components:
-*  Readible Name  ID/Class  Level  micro_name
+*  Readible Name     ID/Class  Level micro_name
 *  Main Workspace          id    0   micro_workspace
 *  Header region           id    1   micro_header
 *  Horizontal region       id    1   micro_horizontal
@@ -27,6 +42,13 @@ body{
 *  Right Bar (bottom)      id    3   micro_rightBottom
 *  Horizontal Resize       id    3   micro_dragBarHorizontal
 *  Right Bar (bot Content) id    4   micro_rightBottomContent
+*
+*  File Tree               class     micro_file_tree
+*  File Tree Element       class     micro_file_element
+*  File Tree Element Icon  class     micro_file_element_icon
+*  File Tree Header        class     micro_file_head
+*  File Tree Header Text   class     micro_file_head_text
+*  File Tree Children      class     micro_file_children
 *  Footer region      id    1   micro_footer
 
 ***  OTHER  ***
@@ -62,7 +84,7 @@ body{
 }
 
 #micro_leftBar{
-  background-color: #FFFF00;
+  background-color: #21252b;
   width: 25%;
   min-width: 80px;
   height: 100%;
@@ -70,8 +92,9 @@ body{
 }
 
 #micro_leftBarContent{
-  width: 100%
-  height: 100%
+  width: auto;
+  height: 100%;
+  overflow: hidden;
 }
 
 #micro_dragBarVertical {
@@ -124,6 +147,46 @@ body{
 
 #scroll_prevent{
   background-color: #FFF;
+}
+
+.micro_file_tree{
+  padding-left: 5px;
+  margin-top: 0px;
+  color: #9da5b4;
+}
+
+.micro_file_tree ul{
+  padding-left: 20px;
+}
+
+.micro_file_element{
+  margin-top: 10px;
+}
+
+.micro_file_head{
+  /*background-color: #FF0000;*/
+  padding-left: 5px;
+  top:1px;
+  position: relative;
+}
+
+.micro_file_head_text{
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 500;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+  text-align: left;
+  color: #9da5b4;
+  padding-left: 5px;
+}
+
+.micro_file_head.dir::before{
+  font-family: 'Octicons';
+  content: "\f0a3";
+}
+
+.micro_file_children{
+  display: inline-grid;
 }
 
 /* ******* OTHER ******* */
