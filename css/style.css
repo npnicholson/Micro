@@ -70,6 +70,20 @@ ul{
 }
 */
 
+/* Content holder - Top level div that holds all of the editors*/
+#micro_editorContent{
+
+}
+/* Editors - each editor themselves*/
+#micro_editorContent div{
+  display:none;
+}
+
+/* Styles unique to the active editor */
+#micro_editorContent div.active{
+  display:block;
+}
+
 #micro_editorTabBar li{
     float: left;
     width: 100%;

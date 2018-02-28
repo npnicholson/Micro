@@ -20,39 +20,52 @@ function Micro(workspace_div){
 
   var addTab = function(name, id, path, head) {
 
+    // Get information about the file
+    let file = loadFile(path);
+
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
+    $('#micro_editorContent .active').removeClass('active');
 
-    console.log("Entered ID: " + id);
     // See if a tab with the given ID already exists.
     if ($('#micro_editorTabBar *[data_id="'+id+'"]').length !== 0) {
 
       // If it does exist, set it to active instead of making a new one
       let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
+      let editor = $('#micro_editorContent *[data_id="'+id+'"]');
+
       tab.addClass('active');
-      //TODO Activate an editor as well
+      editor.addClass('active');
+
     } else {
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
       let iconClass = getIconType(path);
-      let tab = $("<li class='active' data_id=" + id + "><div class='header "+iconClass+"'><span class='tab_name'>"
+      let tab = $("<li class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
         + name + "</span></div><div class='tab_close'></div></li>");
       let tab_close = tab.children('.tab_close');
 
+      // Build the editor
+      let editor = $("<div class='active' data_id='"+id+"'>" + file.data + "</div>");
+
       // Add the created tab to the list
       $('#micro_editorTabBar').prepend(tab);
+
+      // Add the created editor
+      $('#micro_editorContent').prepend(editor);
 
       // Set up the tab's callback functions
       tab.mouseup(function() {
 
         // TODO Remove the transistion property for the X, set the new background
 
+        // Set all tabs and editors to inactive, then set this one to active
         $('#micro_editorTabBar .active').removeClass('active');
+        $('#micro_editorContent .active').removeClass('active');
         tab.addClass('active');
+        editor.addClass('active');
 
         // TODO restore the transistion property for the X (so the bg isnt shitty)
-
-        //TODO Activate the correct editor as well
 
         // Tell the sidebar what we clicked
         setHighlight(head);
@@ -71,6 +84,7 @@ function Micro(workspace_div){
   var removeTab = function(id) {
     // Get the tab with the associated ID
     let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
+    let editor = $('#micro_editorContent *[data_id="'+id+'"]');
     let tab_close = tab.children('.tab_close');
 
     // If there is no tab with that ID, it doesnt need to be removed
@@ -81,15 +95,15 @@ function Micro(workspace_div){
       tab.unbind('mouseup');
       tab_close.unbind('mouseup');
 
-      // Remove the tab itself
+      // Remove the tab and editor
       tab.remove();
+      editor.remove();
 
-      //TODO Remove the editor as well
       numTabs--;
       // If there is no longer an active tab, set a new one to be active
       if (numTabs > 0 && $('#micro_editorTabBar .active').length == 0) {
         $('#micro_editorTabBar').children(':first').addClass('active');
-        //TODO Activate an editor as well
+        $('#micro_editorContent').children(':first').addClass('active');
       }
     }
   }
@@ -131,8 +145,9 @@ function Micro(workspace_div){
    * :: function(fileName)
    * TODO: Make this defination more explicate.
    */
+   var loadFile;
   this.setLoadFile = function(handle){
-    this.loadFile = handle;
+    loadFile = handle;
   }
 
   /* SetSaveFile  - Public
