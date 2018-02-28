@@ -1,4 +1,3 @@
-var micro_count = 0;
 
 /* Micro Framework
  * Returns a new micro object, ready to be assigned to a div and configured
@@ -6,12 +5,86 @@ var micro_count = 0;
 
 // System variables
 var dragging = 'none';
+var micro_count = 0;
+var numTabs = 0;
 
 function Micro(workspace_div){
   if(micro_count > 0){
     console.error("To many Micro's have been created: 1 Max");
     return;
   }
+
+  numTabs = 0;
+
+  var addTab = function(name, id, path) {
+
+    // Set all current tabs to inactive
+    $('#micro_editorTabBar .active').removeClass('active');
+
+    console.log("Entered ID: " + id);
+    // See if a tab with the given ID already exists.
+    if ($('#micro_editorTabBar *[data_id="'+id+'"]').length !== 0) {
+
+      // If it does exist, set it to active instead of making a new one
+      let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
+      tab.addClass('active');
+      //TODO Activate an editor as well
+    } else {
+      // If the tab does not already exist, make one.
+      // Add the new tab to the start. Go ahead and set it to active
+      let iconClass = getIconType(path);
+      let tab = $("<li class='active' data_id=" + id + "><div class='header "+iconClass+"'><span class='tab_name'>"
+        + name + "</span></div><div class='tab_close'></div></li>");
+      let tab_close = tab.children('.tab_close');
+
+      // Add the created tab to the list
+      $('#micro_editorTabBar').prepend(tab);
+
+      // Set up the tab's callback functions
+      tab.mouseup(function() {
+        $('#micro_editorTabBar .active').removeClass('active');
+        tab.addClass('active');
+        //TODO Activate the correct editor as well
+      });
+      tab_close.mouseup(function() {
+        removeTab(id);
+      });
+
+      // Add to the number of tabs
+      numTabs++;
+      //TODO Create an editor as well
+    }
+  }
+
+  var removeTab = function(id) {
+    // Get the tab with the associated ID
+    let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
+    let tab_close = tab.children('.tab_close');
+
+    // If there is no tab with that ID, it doesnt need to be removed
+    if (tab.length === 0) {
+      return;
+    } else {
+      // Remove all of the tab's callback functions
+      tab.unbind('mouseup');
+      tab_close.unbind('mouseup');
+
+      // Remove the tab itself
+      tab.remove();
+
+      //TODO Remove the editor as well
+      numTabs--;
+      // If there is no longer an active tab, set a new one to be active
+      if (numTabs > 0 && $('#micro_editorTabBar .active').length == 0) {
+        $('#micro_editorTabBar').children(':first').addClass('active');
+        //TODO Activate an editor as well
+      }
+    }
+  }
+
+  // addTab('N=Best', "ID1", "test.txt");
+  // addTab('K=Worstfdsfsagafa', "ID3", "test.txt");
+  // addTab('Testing', "ID2", "test.txt");
 
   this.workspace = workspace_div;
 
@@ -69,9 +142,14 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  this.openFile = function(filename){
+  var openFile = function(filename){
+    let fileArr = filename.split('/');
+    let name = fileArr[fileArr.length-1];
+    addTab(name, encodeURIComponent(filename), filename);
     console.log("OpenFile: " + filename);
   }
+
+  this.openFile = openFile;
 
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
