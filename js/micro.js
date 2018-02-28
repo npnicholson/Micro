@@ -107,6 +107,18 @@ function Micro(workspace_div){
     $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
   }
 
+  /* SetInitFileSystem - Public
+   * Initializes the file system
+   * :: function()
+   * TODO: Make this defination more explicate.
+   */
+  this.setInitFileSystem = function(handle){
+    this.initFileSystem = handle;
+    this.initFileSystem(function(){
+      console.log("File System Init Complete.");
+    });
+  }
+
   /* SetGetFileTree - Public
    * Sets the function that will be called when Micro needs a file tree.
    * Expected to return a nested Object Tree. Use '/' as file sep.
@@ -116,7 +128,7 @@ function Micro(workspace_div){
   this.setGetFileTree = function(handle){
     this.getFileTree = handle;
     // Refresh the files after a handle has been set
-    this.updateFileTreeSidebar();
+    this.getFileTree(this.updateFileTreeSidebar);
   }
 
   /* SetLoadFile - Public
@@ -161,10 +173,7 @@ function Micro(workspace_div){
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
    */
-  this.updateFileTreeSidebar = function(){
-    // Get the tree from the wrapper
-    var tree = this.getFileTree();
-
+  this.updateFileTreeSidebar = function(tree){
     // Init the resulting file tree
     this.file_tree = {};
 
