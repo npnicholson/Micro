@@ -39,14 +39,14 @@ function Micro(workspace_div){
     this.updateFileTreeSidebar();
   }
 
-  /* SetGetFile - Public
+  /* SetLoadFile - Public
    * Sets the function that will be called when Micro needs a file.
    * Expected to return an Object.
    * :: function(fileName)
    * TODO: Make this defination more explicate.
    */
-  this.setGetFile = function(handle){
-    this.getFile = handle;
+  this.setLoadFile = function(handle){
+    this.loadFile = handle;
   }
 
   /* SetSaveFile  - Public
@@ -64,6 +64,13 @@ function Micro(workspace_div){
    */
   this.reportError = function(error){
     console.error(error);
+  }
+
+  /* OpenFile  - Public
+   * Opens a file in the editor. Accepts a file path.
+   */
+  this.openFile(filename){
+    console.log("OpenFile: " + filename);
   }
 
   /* UpdateFileTreeSidebar  - Private

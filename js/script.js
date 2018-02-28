@@ -13,7 +13,7 @@ $( document ).ready(function(){
     micro.updateSize();
   });
 
-  
+
 
   // Populate some file IO simulation functions
   micro.setGetFileTree(function(){
@@ -30,8 +30,8 @@ $( document ).ready(function(){
     return files;
   });
 
-  micro.setGetFile(function(req_name){
-    let f = makefile();
+  micro.setLoadFile(function(req_name){
+    let f = makefile(req_name);
     return {name:req_name, data:f, type:"file", size:f.length}
   });
 
@@ -46,9 +46,9 @@ $( document ).ready(function(){
 });
 
 // Temp function to make random files
-function makefile() {
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789     ";
+function makefile(name) {
+  var text = name + ":\n\n";
+  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789     \n";
 
   let stop = Math.floor(Math.random() * 1001)+500;
 
