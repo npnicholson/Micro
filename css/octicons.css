@@ -35,6 +35,18 @@
   speak: none;
 }
 
+.file_handle{
+  position:relative;
+}
+
+.file_handle::before{
+  content:"\f0a3";
+  left: -10px;
+  top:2px;
+  position: absolute;
+  font-size: 12px;
+}
+
 .mega-octicon { font-size: 32px; }
 
 .octicon-alert:before { content:"\f02d"; }

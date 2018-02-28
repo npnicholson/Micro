@@ -69,7 +69,7 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  this.openFile(filename){
+  this.openFile = function(filename){
     console.log("OpenFile: " + filename);
   }
 
@@ -181,7 +181,7 @@ function Micro(workspace_div){
       // Loop through all directories and add them to the DOM
       for(let i = 0; i < dirs.length; i++){
         // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
-        dirs[i].html.addClass('octicon octicon-chevron-down')
+        dirs[i].html.addClass('octicon file_handle')
         dirs[i].html.children('.micro_file_head').addClass('octicon octicon-file-directory');
         base.append(dirs[i].html);
       }
