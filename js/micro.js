@@ -44,8 +44,14 @@ function Micro(workspace_div){
 
       // Set up the tab's callback functions
       tab.mouseup(function() {
+
+        // TODO Remove the transistion property for the X, set the new background
+
         $('#micro_editorTabBar .active').removeClass('active');
         tab.addClass('active');
+
+        // TODO restore the transistion property for the X (so the bg isnt shitty)
+
         //TODO Activate the correct editor as well
 
         // Tell the sidebar what we clicked
