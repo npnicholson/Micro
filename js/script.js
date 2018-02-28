@@ -19,13 +19,14 @@ $( document ).ready(function(){
   micro.setGetFileTree(function(){
     files = [];
     files.push({path:"file1.txt", type:"file", size:1024});
-    files.push({path:"file2.txt", type:"file", size:1024});
-    files.push({path:"file3.txt", type:"file", size:1024});
     files.push({path:"file4.txt", type:"file", size:1024});
+    files.push({path:"file2.txt", type:"file", size:1024});
+    files.push({path:"file7.js", type:"file", size:1024});
+    files.push({path:"dir2/file3.txt", type:"file", size:1024});
+    files.push({path:"dir2/file6.class", type:"file", size:1024});
+    files.push({path:"dir2/file6.txt", type:"file", size:1024});
+    files.push({path:"dir1/dir3/file8.txt", type:"file", size:1024});
     files.push({path:"dir1/file5.txt", type:"file", size:1024});
-    files.push({path:"dir1/file6.txt", type:"file", size:1024});
-    files.push({path:"dir2/dir3/file7.txt", type:"file", size:1024});
-    files.push({path:"dir2/file8.txt", type:"file", size:1024});
     return files;
   });
 
