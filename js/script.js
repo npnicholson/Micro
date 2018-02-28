@@ -14,15 +14,13 @@ $( document ).ready(function(){
   });
 
   micro.conn;
+
   micro.setInitFileSystem(socketInit);
 
   // Populate some file IO simulation functions
   micro.setGetFileTree(socketGetFileTree);
 
-  micro.setLoadFile(function(req_name, callback){
-    let f = makefile(req_name);
-    callback({name:req_name, data:f, type:"file", size:f.length});
-  });
+  micro.setLoadFile(socketLoadFile);
 
   micro.setSaveFile(function(file, callback){
     console.log("File Save");

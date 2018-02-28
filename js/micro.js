@@ -18,10 +18,9 @@ function Micro(workspace_div){
 
   numTabs = 0;
 
-  var addTab = function(name, id, path, head) {
+  var addTab = function(file, id, head) {
 
     // Get information about the file
-    let file = loadFile(path);
 
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
@@ -40,9 +39,9 @@ function Micro(workspace_div){
     } else {
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
-      let iconClass = getIconType(path);
+      let iconClass = getIconType(file.name);
       let tab = $("<li class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
-        + name + "</span></div><div class='tab_close'></div></li>");
+        + file.name + "</span></div><div class='tab_close'></div></li>");
       let tab_close = tab.children('.tab_close');
 
       // Build the editor
@@ -182,11 +181,24 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  var openFile = function(filename, head){
-    let fileArr = filename.split('/');
-    let name = fileArr[fileArr.length-1];
-    addTab(name, encodeURIComponent(filename), filename, head);
-    console.log("OpenFile: " + filename);
+  var openFile = function(filepath, head){
+
+    // Check if we already have a Tab at the filepath
+    if ($('#micro_editorTabBar *[data_id="'+filepath+'"]').length !== 0) {
+      $('#micro_editorTabBar .active').removeClass('active');
+      $('#micro_editorContent .active').removeClass('active');
+      
+      // If it does exist, set it to active instead of making a new one
+      let tab = $('#micro_editorTabBar *[data_id="'+filepath+'"]');
+      let editor = $('#micro_editorContent *[data_id="'+filepath+'"]');
+      tab.addClass('active');
+      editor.addClass('active');
+    } else {
+      let callback = function(data){
+        addTab(data, filepath, head);
+      }
+      loadFile(filepath, callback);
+    }
   }
 
   this.openFile = openFile;
@@ -367,6 +379,7 @@ function Micro(workspace_div){
   // Sets the element passed in as highlighted
   var setHighlight = function(element){
     //let index = calculateFileOrder(path);
+    // TODO: Use filename to look up element
     $('.micro_file_head').removeClass('selected bright')
     element.addClass('selected bright');
   }

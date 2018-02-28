@@ -20,42 +20,34 @@ function socketInit(callback){
   initCallback = callback;
 }
 
+/* Get File Tree */
 var getFileTreeCallback;
 function socketGetFileTree(callback){
   getFileTreeCallback = callback;
-  /*function(callback){
-    files = [];
-    files.push({path:"file1.txt", type:"file", size:1024});
-    files.push({path:"file4.txt", type:"file", size:1024});
-    files.push({path:"file2.txt", type:"file", size:1024});
-    files.push({path:"file7.js", type:"file", size:1024});
-    //files.push({path:"dirtest", type:"dir", size:1024});
-    files.push({path:"dir2/file3.txt", type:"file", size:1024});
-    files.push({path:"dir2/file6.class", type:"file", size:1024});
-    files.push({path:"dir2/file6.txt", type:"file", size:1024});
-    files.push({path:"dir1/dir3/file8.txt", type:"file", size:1024});
-    files.push({path:"dir1/file5.txt", type:"file", size:1024});
-    files.push({path:"file9.txt", type:"file", size:1024});
-    files.push({path:"file10.txt", type:"file", size:1024});
-    files.push({path:"file11.js", type:"file", size:1024});
-    files.push({path:"file12.txt", type:"file", size:1024});
-    files.push({path:"file13.txt", type:"file", size:1024});
-    files.push({path:"file14.js", type:"file", size:1024});
-    callback(files);
-  }*/
-
-    socketSend(['ls'],'processFileTree');
-
+  socketSend(['ls'],'processFileTree');
 }
 
 function processFileTree(msg){
-  console.log(msg);
   files = [];
   for(let i = 0; i < msg.data.length; i++){
     files.push({path:msg.data[i], type:"file", size:1024});
   }
-  console.log(files);
   getFileTreeCallback(files);
+}
+
+// TODO: Remove the use of the text callback strings. Go to id instead.
+
+/* Load File */
+var loadFileCallback;
+function socketLoadFile(file, callback){
+  loadFileCallback = callback;
+  socketSend(['load',file],'processLoadFile');
+}
+
+function processLoadFile(msg){
+  // Replace new lines with '<br/>'
+  let html_file = msg.data.data.replace(/(?:\r\n|\r|\n)/g, '<br />');
+  loadFileCallback({name:msg.data.name, data:html_file, type:msg.data.type, size:msg.data.length});
 }
 
 var socket_key;
