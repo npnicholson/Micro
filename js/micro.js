@@ -47,6 +47,9 @@ function Micro(workspace_div){
         $('#micro_editorTabBar .active').removeClass('active');
         tab.addClass('active');
         //TODO Activate the correct editor as well
+
+        // Tell the sidebar what we clicked
+        removeBrightHighlight();
       });
       tab_close.mouseup(function() {
         removeTab(id);
@@ -338,12 +341,12 @@ function Micro(workspace_div){
   }
 
   // Reduces any file tree highlights to dull
-  this.removeBrightHighlight = function(){
+  var removeBrightHighlight = function(){
     $('.selected.bright').removeClass('bright');
   }
 
   // Increases any file tree highlights to bright
-  this.addBrightHighlight = function(){
+  var addBrightHighlight = function(){
     $('.selected').addClass('bright');
   }
 
