@@ -18,7 +18,7 @@ function Micro(workspace_div){
 
   numTabs = 0;
 
-  var addTab = function(name, id, path) {
+  var addTab = function(name, id, path, head) {
 
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
@@ -49,6 +49,7 @@ function Micro(workspace_div){
         //TODO Activate the correct editor as well
 
         // Tell the sidebar what we clicked
+        setHighlight(head);
         removeBrightHighlight();
       });
       tab_close.mouseup(function() {
@@ -148,10 +149,10 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  var openFile = function(filename){
+  var openFile = function(filename, head){
     let fileArr = filename.split('/');
     let name = fileArr[fileArr.length-1];
-    addTab(name, encodeURIComponent(filename), filename);
+    addTab(name, encodeURIComponent(filename), filename, head);
     console.log("OpenFile: " + filename);
   }
 
@@ -321,7 +322,7 @@ function Micro(workspace_div){
         head.children('.micro_file_head_title').addClass(getIconType(files[i].path));
         // Create the mousedown callback for this menu item
         files[i].html.children('.micro_file_head').mousedown(function(){
-          openFile(files[i].path);
+          openFile(files[i].path, head);
           setHighlight(head);
         });
         // Add this element to the base DOM
