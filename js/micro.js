@@ -26,6 +26,7 @@ function Micro(workspace_div){
    */
   this.updateSize = function(){
     console.log("Window size change");
+    $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
   }
 
   /* SetGetFileTree - Public
@@ -134,10 +135,17 @@ function Micro(workspace_div){
 
     // Create the DOM in the side bar //
 
+
+    let top_level = $('#micro_leftBarContent');
     // Remove the elements that are there now
     // This line removes the resize handle as well.
-    let top_level = $('#micro_leftBarContent');
     top_level.html('');
+    // Create a container for the file tree to go to
+    let container = $('<div id="micro_file_scroll_holder"></div>');
+    // Adjust size to fit scroll window
+    $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
+    // Add the container to the holder
+    container.appendTo(top_level);
 
     // Index for refering to divs after they are placed
     var indexCounter = 0;
@@ -239,7 +247,8 @@ function Micro(workspace_div){
       }
     }
     // Enter the recursive function and add all files to the DOM
-    fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(top_level));
+    fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(container));
+    top_level.prepend('<div id="project_title">Project</div>');
   }
 
   // Sets the element passed in as highlighted
