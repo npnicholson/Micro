@@ -4,6 +4,8 @@ var micro_count = 0;
  * Returns a new micro object, ready to be assigned to a div and configured
  */
 
+ var h;
+
 // System variables
 var dragging = 'none';
 function Micro(workspace_div){
@@ -162,7 +164,7 @@ function Micro(workspace_div){
         layers.push({html:current_layer, type:val.type, name:key, path:val.path});
         // If the current layer is a directory, create an unordered list and add it
         if(val.type !== "file")
-          fileDelve(val, $('<ul></ul>').appendTo(current_layer));
+          fileDelve(val, $('<ul class="element_holder"></ul>').appendTo(current_layer));
       });
       // Initialize some arrays to hold directories and files
       let dirs = []
@@ -191,12 +193,31 @@ function Micro(workspace_div){
       for(let i = 0; i < dirs.length; i++){
         // Get the head and save it for easy use
         let head = dirs[i].html.children('.micro_file_head');
+        // Get the holder and save it for easy use
+        let holder = dirs[i].html;
         // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
         head.children('.micro_file_head_title').addClass('octicon octicon-file-directory');
-        head.children('.micro_file_head_title').append('<span class="file_handle"></span>');
+        // Generate file handle span
+        let handle = $('<span class="file_handle"></span>');
+        head.children('.micro_file_head_title').append(handle);
         // Create the mousedown callback for this menu item
+        let isOpen = true;
         dirs[i].html.children('.micro_file_head').mousedown(function(){
-          // TODO: Add toggle code in here
+          // Switch based on if the directory is open
+          if(isOpen){
+            // Set the file handle to closed
+            handle.addClass('file_handle_closed');
+            // Hide the elemets in this folder
+            holder.children('ul:first.element_holder').css('display','none');
+          }else{
+            // Set the file handle to open
+            handle.removeClass('file_handle_closed');
+            // Restore the elemets in this folder
+            holder.children('ul:first.element_holder').css('display','block');
+          }
+          // Toggle the open variable
+          isOpen = !isOpen;
+          // Set this element as selected
           setHighlight(head);
         });
         // Add this element to the base DOM
@@ -221,10 +242,21 @@ function Micro(workspace_div){
     fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(top_level));
   }
 
+  // Sets the element passed in as highlighted
   var setHighlight = function(element){
     //let index = calculateFileOrder(path);
     $('.micro_file_head').removeClass('selected bright')
     element.addClass('selected bright');
+  }
+
+  // Reduces any file tree highlights to dull
+  this.removeBrightHighlight = function(){
+    $('.selected.bright').removeClass('bright');
+  }
+
+  // Increases any file tree highlights to bright
+  this.addBrightHighlight = function(){
+    $('.selected').addClass('bright');
   }
 
   /****************** initialization ******************/

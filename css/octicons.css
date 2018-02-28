@@ -48,6 +48,10 @@
   font-size: 12px;
 }
 
+.file_handle_closed::before{
+  content:"\f078";
+}
+
 .mega-octicon { font-size: 32px; }
 
 .octicon-alert:before { content:"\f02d"; }
