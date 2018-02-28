@@ -27,6 +27,12 @@ $( document ).ready(function(){
     files.push({path:"dir2/file6.txt", type:"file", size:1024});
     files.push({path:"dir1/dir3/file8.txt", type:"file", size:1024});
     files.push({path:"dir1/file5.txt", type:"file", size:1024});
+    files.push({path:"file9.txt", type:"file", size:1024});
+    files.push({path:"file10.txt", type:"file", size:1024});
+    files.push({path:"file11.js", type:"file", size:1024});
+    files.push({path:"file12.txt", type:"file", size:1024});
+    files.push({path:"file13.txt", type:"file", size:1024});
+    files.push({path:"file14.js", type:"file", size:1024});
     return files;
   });
 
