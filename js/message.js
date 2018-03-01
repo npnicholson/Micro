@@ -69,6 +69,15 @@ function socketSaveFile(filename, filedata, callback){
   socketSend(['save', 'replace', filename, filedata.escapeSpecialChars()] ,id);
 }
 
+function socketDeleteFile(filename, callback){
+  let process = function(msg){
+    callback(msg);
+  }
+  let id = makeid();
+  addCallback(process, id);
+  socketSend(['delete', filename], id);
+}
+
 var socket_key;
 var socket_callback_queue = {};
 
@@ -103,7 +112,7 @@ function processMessage(e){
             path: msg.data[0],
             filename: arr[arr.length-1],
             data: msg.data[1],
-            size: msg.data[1].length
+            size: (msg.data[1]!==undefined?msg.data[1].length:0)
           });
           break;
         default:

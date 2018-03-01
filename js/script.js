@@ -18,6 +18,7 @@ $( document ).ready(function(){
   micro.setInitFileSystem(socketGetFileTree, socketInit);
   micro.setLoadFile(socketLoadFile);
   micro.setSaveFile(socketSaveFile);
+  micro.setDeleteFile(socketDeleteFile);
   /* micro.refreshFileTree
    * Call when a file or direcory change is detected. Expects:
    * {path, filename, data, size}

@@ -153,7 +153,6 @@ function Micro(workspace_div){
     }
     initFileSystem(callback);
     // TODO: Process this file change
-    console.log(msg);
   }
 
 
@@ -171,14 +170,32 @@ function Micro(workspace_div){
   /* SetSaveFile - Public
    * Sets the function that will be called when Micro needs to save a file.
    * Expected to return an Object.
-   * :: function(fileName, fileData)
+   * :: function(fileName, fileData, callback)
    * TODO: Make this defination more explicate.
    */
   var saveFile;
   this.setSaveFile = function(handle){
     saveFile = handle;
+    this.saveFile = handle;
   }
-  this.saveFile = saveFile;
+  // Example:
+  // funct = function(){micro.saveFile('file10.txt','save \'data\' here', function(e){console.log(e);})}
+  // setTimeout(funct,2000);
+
+  /* SetDeleteFile - Public
+   * Sets the function that will be called when Micro needs to delete a file.
+   * Expected to return an Object.
+   * :: function(fileName, callback)
+   * TODO: Make this defination more explicate.
+   */
+  var deleteFile;
+  this.setDeleteFile = function(handle){
+    deleteFile = handle;
+    this.deleteFile = handle;
+  }
+  // Example:
+  // funct = function(){micro.deleteFile('file10.txt', function(e){console.log(e);})}
+  // setTimeout(funct,2000);
 
   /* SetSaveFile  - Public
    * Sets the function that will be called when Micro needs a file tree.
