@@ -16,9 +16,14 @@ font-family: 'Open Sans', sans-serif;
 font-family: 'Roboto', sans-serif;
 */
 
-
-
-html{
+html {
+  --micro_bg_dark: #21252b;
+  --micro_bg_light: #282c34;
+  --micro_accent_dark: #181a1f;
+  --micro_highlight_1: #568af2;
+  --micro_highlight_2: #5f8e6f;
+  --micro_text_dark: rgba(157, 165, 180, 0.6);
+  --micro_text_light: #d7dae0;
 }
 
 body{
@@ -76,7 +81,16 @@ ul{
 }
 /* Editors - each editor themselves*/
 #micro_editorContent div{
+
+  padding: 0px 10px 0px 10px;
   display:none;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+
+  background-color: var(--micro_bg_light);
+  color: var(--micro_text_light);
 }
 
 /* Styles unique to the active editor */
@@ -84,24 +98,69 @@ ul{
   display:block;
 }
 
+#micro_editorTabBarEnd{
+    height: 30px;
+    background-color: var(--micro_bg_dark);
+    float: right;
+    display: block;
+    width: 100%;
+    min-width: 0px;
+    overflow: hidden;
+    flex-shrink: 2;
+    border-left: 1px solid var(--micro_accent_dark);
+    box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
+}
+
+#micro_editorTabBarEnd.hidden{
+    display:none;
+}
+
+#micro_editorTabBar li.divider{
+  width: 0;
+  min-width: 0px;
+  border-left: none;
+  z-index: 1;
+}
+
+#micro_editorTabBar li.divider.hidden{
+  display:none;
+}
+
+
+#micro_editorTabBar li.divider div{
+  position: absolute;
+  display: block;
+  background-color: var(--micro_highlight_2);
+  height: 30px;
+  width: 4px;
+  transform: translateX(-2);
+}
+
+
 #micro_editorTabBar li{
     float: left;
     width: 100%;
     min-width: 85px;
     max-width: 255px;
-    border-left: 1px solid #181a1f;
-    box-shadow: inset 0 -1px 0 #181a1f;
-    color: rgba(157, 165, 180, 0.6);
+    border-left: 1px solid var(--micro_accent_dark);
+    box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
+    color: var(--micro_text_dark);
     position:relative;
-    background-color: #21252b;
+    background-color: var(--micro_bg_dark);
+
+    height:100%;
 }
 
 #micro_editorTabBar li:first-child{
   border-left-color: transparent;
 }
-#micro_editorTabBar li:last-child{
-  border-right: 1px solid #181a1f;
-}
+
+/* TODO: The last-child border needs to be somehow reset to the tab that is
+         at the end. Otherwise there is no vertical line */
+/* #micro_editorTabBar li:last-child{
+  border-right: 1px solid var(--micro_accent_dark);
+} */
+
 
 #micro_editorTabBar li .header {
   /* position: relative;
@@ -109,7 +168,6 @@ ul{
   text-align: center;
   display: block;
   margin: 6px 6px 0px 6px;
-
   overflow: hidden;
   white-space: pre;
   text-overflow: ellipsis;
@@ -144,8 +202,8 @@ ul{
 }
 
 #micro_editorTabBar li .tab_close:hover{
-  background-color: #568af2;
-  color: #181a1f;
+  background-color: var(--micro_highlight_1);
+  color: var(--micro_accent_dark);
 }
 
 /* #micro_editorTabBar:hover li .tab_close::before{
@@ -173,7 +231,7 @@ ul{
 #micro_editorTabBar li.active {
   box-shadow: none !important;
   background-color: #282c34;
-  color: #d7dae0 !important;
+  color: var(--micro_text_light) !important;
   font-weight: 600;
 }
 
@@ -181,7 +239,7 @@ ul{
   width: 100%;
   height: 600px;
   position: relative;
-  background-color: #181a1f;
+  background-color: var(--micro_bg_dark)
 }
 
 #micro_header{
@@ -195,7 +253,7 @@ ul{
 }
 
 #micro_leftBar{
-  background-color: #21252b;
+  background-color: var(--micro_bg_dark);
   width: 22%;
   min-width: 80px;
   height: 100%;
@@ -215,7 +273,7 @@ ul{
   float: right;
   width: 5px;
   cursor: col-resize;
-  border-right: 1px solid #181a1f;
+  border-right: 1px solid var(--micro_accent_dark);
 }
 
 #micro_rightBar{
@@ -226,21 +284,21 @@ ul{
 }
 
 #micro_rightTop{
-  background-color: #282c34;
+  background-color: var(--micro_bg_light);
   width: 100%;
   height: 90%;
   min-height: 20px;
 }
 
 #micro_editorTabBar{
-  background-color: #21252b;
+  background-color: var(--micro_bg_dark);
   list-style-type: none;
   margin: 0;
   padding: 0;
   height: 30px;
   overflow: hidden;
   display:flex;
-  box-shadow: inset 0 -1px 0 #181a1f;
+  box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
 }
 
 #micro_dragBarHorizontal {
@@ -248,12 +306,12 @@ ul{
   width:100%;
   height: 2px;
   cursor: row-resize;
-  border-top: 1px solid #181a1f;
+  border-top: 1px solid var(--micro_accent_dark);
 }
 
 
 #micro_rightBottom{
-  background-color: #181a1f;
+  background-color: var(--micro_accent_dark);
   color: white;
   width: 100%;
   height: 10%;
@@ -266,7 +324,7 @@ ul{
 }
 
 #micro_footer {
-  background-color: #000FFF;
+  background-color: var(--micro_highlight_1);
   height: 25px;
 }
 
@@ -322,7 +380,7 @@ ul{
 }
 
 .micro_file_head.selected.bright:before{
-  background-color: #4d78cc;
+  background-color: var(--micro_highlight_1);
 }
 
 .micro_file_head_title{
@@ -373,6 +431,23 @@ ul{
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
   supported by Chrome and Opera */
+}
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
 }
 
 /* Changes css items based on media actions */

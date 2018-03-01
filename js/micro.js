@@ -10,6 +10,8 @@ var dragging = 'none';
 var micro_count = 0;
 var numTabs = 0;
 
+// var divider = $('<li class="divider"><div></div></li>');
+
 function Micro(workspace_div){
   if(micro_count > 0){
     console.error("To many Micro's have been created: 1 Max");
@@ -17,6 +19,8 @@ function Micro(workspace_div){
   }
 
   numTabs = 0;
+
+  var divider = $('#micro_editorTabBar .divider');
 
   var addTab = function(name, id, path, head) {
 
@@ -41,7 +45,7 @@ function Micro(workspace_div){
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
       let iconClass = getIconType(path);
-      let tab = $("<li class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
+      let tab = $("<li draggable='true' class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
         + name + "</span></div><div class='tab_close'></div></li>");
       let tab_close = tab.children('.tab_close');
 
@@ -54,10 +58,11 @@ function Micro(workspace_div){
       // Add the created editor
       $('#micro_editorContent').prepend(editor);
 
-      // Set up the tab's callback functions
+      // Set the tab's press callback (activates this tab)
       tab.mouseup(function() {
 
-        // TODO Remove the transistion property for the X, set the new background
+        // Disable the transition for the close tab.
+        tab_close.addClass('notransition');
 
         // Set all tabs and editors to inactive, then set this one to active
         $('#micro_editorTabBar .active').removeClass('active');
@@ -65,20 +70,105 @@ function Micro(workspace_div){
         tab.addClass('active');
         editor.addClass('active');
 
-        // TODO restore the transistion property for the X (so the bg isnt shitty)
+        // Re-enable the transition. OffsetHeight used to flush the CSS changes
+        tab_close[0].offsetHeight;
+        tab_close.removeClass('notransition');
 
         // Tell the sidebar what we clicked
         setHighlight(head);
         removeBrightHighlight();
       });
+
+      tab[0].addEventListener('dragstart', function(e) {
+        this.style.opacity = '0.4';
+      }, false);
+
+      tab[0].addEventListener('dragover', function(e) {
+        if (e.preventDefault){
+          e.preventDefault(); // Necessary. Allows us to drop.
+        }
+        e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
+
+        if ((e.pageX - $(this).offset().left)/$(this).width() >= 0.5) {
+          // Right side
+          this.classList.remove('over-left');
+          this.classList.add('over-right');
+          divider.insertAfter(this);
+          divider.removeClass('hidden');
+
+        } else {
+          // left side
+          this.classList.remove('over-right');
+          this.classList.add('over-left');
+          divider.insertBefore(this);
+          divider.removeClass('hidden');
+        }
+        return false;
+      }, false);
+
+      tab[0].addEventListener('dragleave', function(e) {
+        this.classList.remove('over-right');
+        this.classList.remove('over-left');
+      }, false);
+
+      tab[0].addEventListener('dragend', function(e){
+        this.style.opacity = '1';
+        let tOver = $('#micro_editorTabBar').find('.over-right,.over-left');
+        if (tOver.length !== 0) {
+          if ((e.pageX - tOver.offset().left)/tOver.width() >= 0.5) {
+            // Right side
+            $(this).insertAfter(tOver);
+            console.log("insert After");
+          } else {
+            // left side
+            $(this).insertBefore(tOver);
+            console.log("insert Before");
+          }
+          $('#micro_editorTabBar .over-right').removeClass('over-right');
+          $('#micro_editorTabBar .over-left').removeClass('over-left');
+        }
+        divider.addClass('hidden');
+      }, false);
+
+      // tab[0].addEventListener('drop', function(e) {
+      // divider.addClass('hidden');
+      // },false);
+      //   this.style.opacity = '1';
+      //
+      //   // let tOver = $('#micro_editorTabBar').find('.over-right,.over-left');
+      //   // console.log(tOver);
+      //   // console.log($(this));
+      //   // $(this).insertAfter(tOver);
+      //   // console.log(tOver[0].outerHTML);
+      //   // if ((e.pageX - tOver.offset().left)/tOver.width() >= 0.5) {
+      //   //   // Right side
+      //   //   $(this).insertAfter(tOver);
+      //   //   tOver.insertBefore(this);
+      //   //   console.log("insert After");
+      //   // } else {
+      //   //   // left side
+      //   //   $(this).insertBefore(tOver);
+      //   //   tOver.insertAfter(this);
+      //   //   console.log("insert Before");
+      //   // }
+      //
+      //   // $('#micro_editorTabBar .over-right').removeClass('over-right');
+      //   // $('#micro_editorTabBar .over-left').removeClass('over-left');
+      //
+      // }, false);
+
+      // Set the tab's close callback (press on the remove button)
       tab_close.mouseup(function() {
-        removeTab(id);
+        if (dragging === 'none')
+          removeTab(id);
       });
 
       // Add to the number of tabs
       numTabs++;
-      //TODO Create an editor as well
     }
+
+    // Since there will now be at least one tab, activate the right bar
+    $(micro_editorTabBarEnd).removeClass('hidden');
   }
 
   var removeTab = function(id) {
@@ -92,8 +182,8 @@ function Micro(workspace_div){
       return;
     } else {
       // Remove all of the tab's callback functions
-      tab.unbind('mouseup');
-      tab_close.unbind('mouseup');
+      tab.unbind();
+      tab_close.unbind();
 
       // Remove the tab and editor
       tab.remove();
@@ -105,6 +195,12 @@ function Micro(workspace_div){
         $('#micro_editorTabBar').children(':first').addClass('active');
         $('#micro_editorContent').children(':first').addClass('active');
       }
+
+      if (numTabs === 0) {
+        // If there are no more tabs, hide the tab right bar
+        $(micro_editorTabBarEnd).addClass('hidden');
+      }
+
     }
   }
 
@@ -449,8 +545,8 @@ function Micro(workspace_div){
 
   // Draging mouse up - resize handles
   $(document).mouseup(function(e){
+    $(document).unbind('mousemove');
     if (dragging === 'vertical') {
-      $(document).unbind('mousemove');
       var percentage = (e.pageX / window.innerWidth) * 100;
       if (percentage > 100)
       percentage = 100;
@@ -475,7 +571,6 @@ function Micro(workspace_div){
       $('#micro_rightBar').css("width",mainPercentage + "%");
       dragging = 'none';
     } else if (dragging === 'horizontal') {
-      $(document).unbind('mousemove');
       let top = $('#micro_rightBar')[0].offsetTop;
       // Ensure we didnt drag way too far
       if (percentage > 100)
@@ -501,6 +596,8 @@ function Micro(workspace_div){
       $('#micro_rightTop').css("height",percentage + "%");
       $('#micro_rightBottom').css("height",mainPercentage + "%");
       dragging = 'none';
+    } else if(dragging === 'tab'){
+      console.log("Finished dragging a tab");
     }
   });
   // ********** Resize Handle System End ********** //
