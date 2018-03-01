@@ -35,7 +35,14 @@ function Micro(workspace_div){
     editor.addClass('active');
   }
 
-  var divider = $('#micro_editorTabBar .divider');
+  var getTabDivider = function() {
+    let divider = $('#micro_editorTabBar .divider');
+    if (divider.length === 0) {
+      divider = $("<li class='divider'><div></div></li>");
+      $('#micro_editorTabBar').prepend(divider);
+    }
+    return divider;
+  }
   var addTab = function(file, id, head) {
 
     // Get information about the file
@@ -106,15 +113,13 @@ function Micro(workspace_div){
           // Right side
           this.classList.remove('over-left');
           this.classList.add('over-right');
-          divider.insertAfter(this);
-          divider.removeClass('hidden');
+          getTabDivider().insertAfter(this);
 
         } else {
           // left side
           this.classList.remove('over-right');
           this.classList.add('over-left');
-          divider.insertBefore(this);
-          divider.removeClass('hidden');
+          getTabDivider().insertBefore(this);
         }
         return false;
       }, false);
@@ -125,6 +130,7 @@ function Micro(workspace_div){
       }, false);
 
       tab[0].addEventListener('dragend', function(e){
+        getTabDivider().remove();
         this.style.opacity = '1';
         let tOver = $('#micro_editorTabBar').find('.over-right,.over-left');
         if (tOver.length !== 0) {
@@ -139,8 +145,7 @@ function Micro(workspace_div){
           }
           $('#micro_editorTabBar .over-right').removeClass('over-right');
           $('#micro_editorTabBar .over-left').removeClass('over-left');
-        }
-        divider.addClass('hidden');
+        };
         activateTab(id);
       }, false);
 

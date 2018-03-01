@@ -122,18 +122,13 @@ ul{
   z-index: 1;
 }
 
-#micro_editorTabBar li.divider.hidden{
-  display:none;
-}
-
-
 #micro_editorTabBar li.divider div{
   position: absolute;
   display: block;
   background-color: var(--micro_highlight_2);
   height: 30px;
   width: 4px;
-  transform: translateX(-2);
+  transform: translateX(-2px);
 }
 
 
