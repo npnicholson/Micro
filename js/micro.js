@@ -43,7 +43,7 @@ function Micro(workspace_div){
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
       let iconClass = getIconType(file.name);
-      let tab = $("<li class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
+      let tab = $("<li class='active' draggable='true' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
         + file.name + "</span></div><div class='tab_close'></div></li>");
       let tab_close = tab.children('.tab_close');
 
