@@ -3,14 +3,12 @@
  * Returns a new micro object, ready to be assigned to a div and configured
  */
 
- var h;
+var h;
 
 // System variables
 var dragging = 'none';
 var micro_count = 0;
 var numTabs = 0;
-
-// var divider = $('<li class="divider"><div></div></li>');
 
 function Micro(workspace_div){
   if(micro_count > 0){
@@ -18,9 +16,11 @@ function Micro(workspace_div){
     return;
   }
 
+/**************** Tab Manager ****************/
+  // We start with no tabs
   numTabs = 0;
 
-
+  // Updates the tab with the given id using the given file data
   var updateTab = function(id, fileData) {
     let editor = $('#micro_editorContent *[data_id="'+id+'"]');
     editor.text(fileData);
@@ -37,11 +37,21 @@ function Micro(workspace_div){
     activeTabPath = id;
   }
 
-  var divider = $('#micro_editorTabBar .divider');
-  var addTab = function(file, id) {
+  // Get a reference to the tab divider (used for dragging). If one does not
+  // exist, make one
+  var getTabDivider = function() {
+    let divider = $('#micro_editorTabBar .divider');
+    if (divider.length === 0) {
+      divider = $("<li class='divider'><div></div></li>");
+      $('#micro_editorTabBar').prepend(divider);
+    }
+    return divider;
+  }
 
-    // Get information about the file
-
+  // Add a tab with the given file data, id, and side-bar head reference
+  // TODO: Look into optimizations that can be made here, especially with the
+  //       dragging system
+  var addTab = function(file, id, head) {
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
     $('#micro_editorContent .active').removeClass('active');
@@ -96,55 +106,70 @@ function Micro(workspace_div){
         removeBrightHighlight();
       });
 
+      // Listeners responsible for tab dragging. On start drag, we set the
+      // opacity of the tab to 0.4.
       tab[0].addEventListener('dragstart', function(e) {
         this.style.opacity = '0.4';
       }, false);
 
+      // When we drag something over the tab, we calculate the relative position
+      // of the mouse to deturmine which side the cursor is.
+      // TODO: deturmine if the .over-left and .over-right classes are needed (instead of a simple .over class)
       tab[0].addEventListener('dragover', function(e) {
         if (e.preventDefault){
           e.preventDefault(); // Necessary. Allows us to drop.
         }
         e.dataTransfer.dropEffect = 'move';  // See the section on the DataTransfer object.
 
+        // Add the divider before or after the tab as needed
         if ((e.pageX - $(this).offset().left)/$(this).width() >= 0.5) {
           // Right side
           this.classList.remove('over-left');
           this.classList.add('over-right');
-          divider.insertAfter(this);
-          divider.removeClass('hidden');
+          getTabDivider().insertAfter(this);
 
         } else {
           // left side
           this.classList.remove('over-right');
           this.classList.add('over-left');
-          divider.insertBefore(this);
-          divider.removeClass('hidden');
+          getTabDivider().insertBefore(this);
         }
         return false;
       }, false);
 
+      // When dragging, when we leave this tab we remove all .over classes
       tab[0].addEventListener('dragleave', function(e) {
         this.classList.remove('over-right');
         this.classList.remove('over-left');
       }, false);
 
+      // When the drag finishes, we remove the divider, set the opacity back to
+      // 1, recalculate where we should place the tab, and place it.
       tab[0].addEventListener('dragend', function(e){
+        // Remove the tab divider
+        getTabDivider().remove();
+
+        // Restore the opacity
         this.style.opacity = '1';
+
+        // Figure out which tab we are currently over
         let tOver = $('#micro_editorTabBar').find('.over-right,.over-left');
+
+        // If we were atcually over a tab, move to the right place
         if (tOver.length !== 0) {
-          if ((e.pageX - tOver.offset().left)/tOver.width() >= 0.5) {
-            // Right side
+          // Figure out which side of the targe tab to place this on
+          if ((e.pageX - tOver.offset().left)/tOver.width() >= 0.5) { // Right
             $(this).insertAfter(tOver);
-            console.log("insert After");
-          } else {
-            // left side
+          } else { // Left
             $(this).insertBefore(tOver);
-            console.log("insert Before");
           }
+
+          // Clear all over classes
           $('#micro_editorTabBar .over-right').removeClass('over-right');
           $('#micro_editorTabBar .over-left').removeClass('over-left');
-        }
-        divider.addClass('hidden');
+        };
+
+        // Activate whatever tab we were dragging regardless of its move staus
         activateTab(id);
       }, false);
 
@@ -162,6 +187,7 @@ function Micro(workspace_div){
     $(micro_editorTabBarEnd).removeClass('hidden');
   }
 
+  // Remove the tab with the given id, if it exists
   var removeTab = function(id) {
     // Get the tab with the associated ID
     let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
@@ -198,9 +224,7 @@ function Micro(workspace_div){
     }
   }
 
-  // addTab('N=Best', "ID1", "test.txt");
-  // addTab('K=Worstfdsfsagafa', "ID3", "test.txt");
-  // addTab('Testing', "ID2", "test.txt");
+  /**************** End Tab Manager ****************/
 
   this.workspace = workspace_div;
 
@@ -427,7 +451,6 @@ function Micro(workspace_div){
         let icon_holder = $('<div class="micro_file_head_title"></div>');
         let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
         this.sidebar_heads[val.path] = head;
-        console.log(val);
         icon_holder.append(text);
         head.append(icon_holder)
         current_layer.append(head);
@@ -556,6 +579,7 @@ function Micro(workspace_div){
   /****************** initialization ******************/
 
   // ********** Resize Handle System ********** //
+  // TODO: Needs major code review. There has to be a better way to do this
   // Resize Handle - Left and Right Panes
   $('#micro_dragBarVertical').mousedown(function(e){
     e.preventDefault();
