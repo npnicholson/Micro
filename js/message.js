@@ -19,7 +19,7 @@ function socketInit(callback){
       setTimeout(function(){socketInit(callback)},500);
     }
     micro.conn.onerror = function(e){
-      console.error(e.data);
+      console.error(e);
     }
 
     socket_refreshFileTree = micro.refreshFileTree;
