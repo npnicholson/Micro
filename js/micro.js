@@ -131,24 +131,31 @@ function Micro(workspace_div){
    * :: function()
    * TODO: Make this defination more explicate.
    */
-  this.setInitFileSystem = function(handle){
-    this.initFileSystem = handle;
-    this.initFileSystem(function(){
-      console.log("File System Init Complete.");
-    });
+  var initFileSystem;
+  var getFileTree;
+  this.setInitFileSystem = function(handle_filetree, handle_success){
+    this.initFileSystem = handle_success;
+    initFileSystem = handle_success;
+    this.getFileTree = handle_filetree;
+    getFileTree = handle_filetree;
+    this.refreshFileTree();
   }
 
-  /* SetGetFileTree - Public
-   * Sets the function that will be called when Micro needs a file tree.
-   * Expected to return a nested Object Tree. Use '/' as file sep.
-   * :: function()
+  /* RefreshFileTree - Public
+   * Call to force a tile tree refresh request
    * TODO: Make this defination more explicate.
    */
-  this.setGetFileTree = function(handle){
-    this.getFileTree = handle;
-    // Refresh the files after a handle has been set
-    this.getFileTree(this.updateFileTreeSidebar);
+  this.refreshFileTree = function(msg){
+    let callback = function(msg){
+      console.log("File System Init Complete.");
+      // Refresh the files after a handle has been set
+      getFileTree(updateFileTreeSidebar);
+    }
+    initFileSystem(callback);
+    // TODO: Process this file change
+    console.log(msg);
   }
+
 
   /* SetLoadFile - Public
    * Sets the function that will be called when Micro needs a file.
@@ -156,10 +163,22 @@ function Micro(workspace_div){
    * :: function(fileName)
    * TODO: Make this defination more explicate.
    */
-   var loadFile;
+  var loadFile;
   this.setLoadFile = function(handle){
     loadFile = handle;
   }
+
+  /* SetSaveFile - Public
+   * Sets the function that will be called when Micro needs to save a file.
+   * Expected to return an Object.
+   * :: function(fileName, fileData)
+   * TODO: Make this defination more explicate.
+   */
+  var saveFile;
+  this.setSaveFile = function(handle){
+    saveFile = handle;
+  }
+  this.saveFile = saveFile;
 
   /* SetSaveFile  - Public
    * Sets the function that will be called when Micro needs a file tree.
@@ -187,7 +206,7 @@ function Micro(workspace_div){
     if ($('#micro_editorTabBar *[data_id="'+filepath+'"]').length !== 0) {
       $('#micro_editorTabBar .active').removeClass('active');
       $('#micro_editorContent .active').removeClass('active');
-      
+
       // If it does exist, set it to active instead of making a new one
       let tab = $('#micro_editorTabBar *[data_id="'+filepath+'"]');
       let editor = $('#micro_editorContent *[data_id="'+filepath+'"]');
@@ -206,7 +225,7 @@ function Micro(workspace_div){
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
    */
-  this.updateFileTreeSidebar = function(tree){
+  var updateFileTreeSidebar = function(tree){
     // Init the resulting file tree
     this.file_tree = {};
 

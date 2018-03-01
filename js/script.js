@@ -13,20 +13,15 @@ $( document ).ready(function(){
     micro.updateSize();
   });
 
-  micro.conn;
 
-  micro.setInitFileSystem(socketInit);
 
-  // Populate some file IO simulation functions
-  micro.setGetFileTree(socketGetFileTree);
-
+  micro.setInitFileSystem(socketGetFileTree, socketInit);
   micro.setLoadFile(socketLoadFile);
-
-  micro.setSaveFile(function(file, callback){
-    console.log("File Save");
-    console.log(file);
-    callback(true);
-  })
+  micro.setSaveFile(socketSaveFile);
+  /* micro.refreshFileTree
+   * Call when a file or direcory change is detected. Expects:
+   * {path, filename, data, size}
+   */
 
 
 
