@@ -21,11 +21,9 @@ function Micro(workspace_div){
   numTabs = 0;
 
   var divider = $('#micro_editorTabBar .divider');
-
-  var addTab = function(name, id, path, head) {
+  var addTab = function(file, id, head) {
 
     // Get information about the file
-    let file = loadFile(path);
 
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
@@ -44,9 +42,9 @@ function Micro(workspace_div){
     } else {
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
-      let iconClass = getIconType(path);
-      let tab = $("<li draggable='true' class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
-        + name + "</span></div><div class='tab_close'></div></li>");
+      let iconClass = getIconType(file.name);
+      let tab = $("<li class='active' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
+        + file.name + "</span></div><div class='tab_close'></div></li>");
       let tab_close = tab.children('.tab_close');
 
       // Build the editor
@@ -130,33 +128,6 @@ function Micro(workspace_div){
         divider.addClass('hidden');
       }, false);
 
-      // tab[0].addEventListener('drop', function(e) {
-      // divider.addClass('hidden');
-      // },false);
-      //   this.style.opacity = '1';
-      //
-      //   // let tOver = $('#micro_editorTabBar').find('.over-right,.over-left');
-      //   // console.log(tOver);
-      //   // console.log($(this));
-      //   // $(this).insertAfter(tOver);
-      //   // console.log(tOver[0].outerHTML);
-      //   // if ((e.pageX - tOver.offset().left)/tOver.width() >= 0.5) {
-      //   //   // Right side
-      //   //   $(this).insertAfter(tOver);
-      //   //   tOver.insertBefore(this);
-      //   //   console.log("insert After");
-      //   // } else {
-      //   //   // left side
-      //   //   $(this).insertBefore(tOver);
-      //   //   tOver.insertAfter(this);
-      //   //   console.log("insert Before");
-      //   // }
-      //
-      //   // $('#micro_editorTabBar .over-right').removeClass('over-right');
-      //   // $('#micro_editorTabBar .over-left').removeClass('over-left');
-      //
-      // }, false);
-
       // Set the tab's close callback (press on the remove button)
       tab_close.mouseup(function() {
         if (dragging === 'none')
@@ -223,17 +194,36 @@ function Micro(workspace_div){
     $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
   }
 
-  /* SetGetFileTree - Public
-   * Sets the function that will be called when Micro needs a file tree.
-   * Expected to return a nested Object Tree. Use '/' as file sep.
+  /* SetInitFileSystem - Public
+   * Initializes the file system
    * :: function()
    * TODO: Make this defination more explicate.
    */
-  this.setGetFileTree = function(handle){
-    this.getFileTree = handle;
-    // Refresh the files after a handle has been set
-    this.updateFileTreeSidebar();
+  var initFileSystem;
+  var getFileTree;
+  this.setInitFileSystem = function(handle_filetree, handle_success){
+    this.initFileSystem = handle_success;
+    initFileSystem = handle_success;
+    this.getFileTree = handle_filetree;
+    getFileTree = handle_filetree;
+    this.refreshFileTree();
   }
+
+  /* RefreshFileTree - Public
+   * Call to force a tile tree refresh request
+   * TODO: Make this defination more explicate.
+   */
+  this.refreshFileTree = function(msg){
+    let callback = function(msg){
+      console.log("File System Init Complete.");
+      // Refresh the files after a handle has been set
+      getFileTree(updateFileTreeSidebar);
+    }
+    initFileSystem(callback);
+    // TODO: Process this file change
+    console.log(msg);
+  }
+
 
   /* SetLoadFile - Public
    * Sets the function that will be called when Micro needs a file.
@@ -241,10 +231,22 @@ function Micro(workspace_div){
    * :: function(fileName)
    * TODO: Make this defination more explicate.
    */
-   var loadFile;
+  var loadFile;
   this.setLoadFile = function(handle){
     loadFile = handle;
   }
+
+  /* SetSaveFile - Public
+   * Sets the function that will be called when Micro needs to save a file.
+   * Expected to return an Object.
+   * :: function(fileName, fileData)
+   * TODO: Make this defination more explicate.
+   */
+  var saveFile;
+  this.setSaveFile = function(handle){
+    saveFile = handle;
+  }
+  this.saveFile = saveFile;
 
   /* SetSaveFile  - Public
    * Sets the function that will be called when Micro needs a file tree.
@@ -266,11 +268,24 @@ function Micro(workspace_div){
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  var openFile = function(filename, head){
-    let fileArr = filename.split('/');
-    let name = fileArr[fileArr.length-1];
-    addTab(name, encodeURIComponent(filename), filename, head);
-    console.log("OpenFile: " + filename);
+  var openFile = function(filepath, head){
+
+    // Check if we already have a Tab at the filepath
+    if ($('#micro_editorTabBar *[data_id="'+filepath+'"]').length !== 0) {
+      $('#micro_editorTabBar .active').removeClass('active');
+      $('#micro_editorContent .active').removeClass('active');
+
+      // If it does exist, set it to active instead of making a new one
+      let tab = $('#micro_editorTabBar *[data_id="'+filepath+'"]');
+      let editor = $('#micro_editorContent *[data_id="'+filepath+'"]');
+      tab.addClass('active');
+      editor.addClass('active');
+    } else {
+      let callback = function(data){
+        addTab(data, filepath, head);
+      }
+      loadFile(filepath, callback);
+    }
   }
 
   this.openFile = openFile;
@@ -278,10 +293,7 @@ function Micro(workspace_div){
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
    */
-  this.updateFileTreeSidebar = function(){
-    // Get the tree from the wrapper
-    var tree = this.getFileTree();
-
+  var updateFileTreeSidebar = function(tree){
     // Init the resulting file tree
     this.file_tree = {};
 
@@ -454,6 +466,7 @@ function Micro(workspace_div){
   // Sets the element passed in as highlighted
   var setHighlight = function(element){
     //let index = calculateFileOrder(path);
+    // TODO: Use filename to look up element
     $('.micro_file_head').removeClass('selected bright')
     element.addClass('selected bright');
   }
