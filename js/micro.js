@@ -20,6 +20,21 @@ function Micro(workspace_div){
 
   numTabs = 0;
 
+
+  var updateTab(id, file) {
+    let editor = $('#micro_editorContent *[data_id="'+id+'"]');
+    editor.text(file.data);
+  }
+
+  var activateTab = function(id) {
+    $('#micro_editorTabBar .active').removeClass('active');
+    $('#micro_editorContent .active').removeClass('active');
+    let tab = $('#micro_editorTabBar *[data_id="'+id+'"]');
+    let editor = $('#micro_editorContent *[data_id="'+id+'"]');
+    tab.addClass('active');
+    editor.addClass('active');
+  }
+
   var divider = $('#micro_editorTabBar .divider');
   var addTab = function(file, id, head) {
 
@@ -126,6 +141,7 @@ function Micro(workspace_div){
           $('#micro_editorTabBar .over-left').removeClass('over-left');
         }
         divider.addClass('hidden');
+        activateTab(id);
       }, false);
 
       // Set the tab's close callback (press on the remove button)
