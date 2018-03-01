@@ -21,7 +21,7 @@ function Micro(workspace_div){
   numTabs = 0;
 
 
-  var updateTab(id, file) {
+  var updateTab = function(id, file) {
     let editor = $('#micro_editorContent *[data_id="'+id+'"]');
     editor.text(file.data);
   }
