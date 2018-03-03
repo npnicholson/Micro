@@ -1,7 +1,9 @@
 var socket_pass = getParameterByName('key');
 var socket_connected = false;
 var socket_refreshFileTree;
+var hash = undefined;
 function socketInit(callback){
+  hash = undefined;
   if(socket_connected){
     callback();
   }else{
@@ -21,7 +23,6 @@ function socketInit(callback){
     micro.conn.onerror = function(e){
       console.error(e);
     }
-
     socket_refreshFileTree = micro.refreshFileTree;
   }
 }
@@ -35,13 +36,13 @@ function socketGetFileTree(callback){
   let process = function(msg){
     files = [];
     for(let i = 0; i < msg.data.length; i++){
-      files.push({path:msg.data[i], type:"file", size:1024});
+      files.push(msg.data[i]);
     }
     callback(files);
   }
   let id = makeid();
   addCallback(process, id);
-  socketSend(['ls'], id);
+  socketSend(['tree', './'], id);
 }
 
 /* SocketLoadFile
@@ -57,7 +58,7 @@ function socketLoadFile(file, callback){
   }
   let id = makeid();
   addCallback(process, id);
-  socketSend(['load',file.escapeSpecialChars()], id);
+  socketSend(['load','utf-8',file.escapeSpecialChars()], id);
 }
 
 function socketSaveFile(filename, filedata, callback){
@@ -66,7 +67,7 @@ function socketSaveFile(filename, filedata, callback){
   }
   let id = makeid();
   addCallback(process, id);
-  socketSend(['save', 'replace', filename, filedata.escapeSpecialChars()] ,id);
+  socketSend(['save', 'utf-8', filename, filedata.escapeSpecialChars()] ,id);
 }
 
 function socketDeleteFile(filename, callback){
@@ -101,27 +102,32 @@ function processMessage(e){
    * 4: Invalid key
    * 5: Error
    * 6: Key set
+   * 7: File/Direcory Update
    */
   if(msg.code === 1){
     var callback = msg.callback;
     if(callback !== "0"){
-      switch(callback){
-        case "file_tree_refresh":
-          let arr = msg.data[0].split('/');
-          socket_refreshFileTree({
-            path: msg.data[0],
-            filename: arr[arr.length-1],
-            data: msg.data[1],
-            size: (msg.data[1]!==undefined?msg.data[1].length:0)
-          });
-          break;
-        default:
-          getCallback(callback)(msg);
-          break;
-      }
+      getCallback(callback)(msg);
     }
+  }else if(msg.code === 7){
+    /*switch(msg.data[2]){
+      case 'copy':
+      case 'move':
+        break;
+      case 'update':
+        break;
+      case 'delete':
+        break;
+    }*/
+    let arr = msg.data[0].split('/');
+    socket_refreshFileTree({
+      path: msg.data[0],
+      filename: arr[arr.length-1],
+      data: msg.data[1],
+      size: (msg.data[1]!==undefined?msg.data[1].length:0)
+    });
   }else if(msg.code === 6){
-    socket_key = msg.data[0];
+    socket_key = msg.data;
   }else{
     switch(msg.code){
       case 0:
@@ -153,8 +159,11 @@ function socketSend(rqst, call){
   if(!socket_connected){
     setTimeout(function(){socketSend(rqst,call)}, 500);
   }else{
+    if(hash === undefined){
+      hash = MD5(socket_key + '-' + socket_pass);
+    }
     let to_send = {
-      key: socket_key + '-' + socket_pass,
+      key: hash,
       request: rqst,
       callback: call
     };

@@ -371,6 +371,7 @@ function Micro(workspace_div){
   var updateFileTreeSidebar = function(tree){
     // Init the resulting file tree
     this.file_tree = {};
+    console.log(tree);
     this.sidebar_heads = {};
     // Loop through each file and split the path into an array of dirs and the end file
     tree.forEach(function(element) {
@@ -391,7 +392,7 @@ function Micro(workspace_div){
         let ele = tree[i];
         // If this depth is past the file's depth, skip it (already done)
         if(depth > ele.pathArr.length - 1)
-          continue;
+          continue
         // If not, we have more work to do. Set to loop again.
         progress = false;
         // Get the file name
