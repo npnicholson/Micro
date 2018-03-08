@@ -347,6 +347,12 @@ function Micro(workspace_div){
     saveFile = handle;
     this.saveFile = handle;
   }
+
+  // Initial test for key binding
+  Mousetrap.bind('meta+s', function() {
+    console.log('Save Key Command');
+    return false;
+  });
   // Example:
   // funct = function(){micro.saveFile('file10.txt','save \'data\' here', function(e){console.log(e);})}
   // setTimeout(funct,2000);
@@ -513,7 +519,7 @@ function Micro(workspace_div){
         Object.entries(current).forEach(([key, val]) => {
           console.log(val);
           // Create a list item for the current layer
-          let current_layer = $('<li class="micro_file_element"></li>');
+          let current_layer = $('<li title="'+key+'" class="micro_file_element"></li>');
           // Create a title header for the current layer and append it
           let text = $('<span class="micro_file_head_text">'+key+'<span>');
           let icon_holder = $('<div class="micro_file_head_title"></div>');
