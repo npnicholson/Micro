@@ -54,6 +54,10 @@ function Micro(workspace_div){
   // TODO: Look into optimizations that can be made here, especially with the
   //       dragging system
   var addTab = function(file, id, head) {
+
+    // Remember which tab was active before the add
+    var prevActive = $('#micro_editorTabBar .active');
+
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
     $('#micro_editorContent .active').removeClass('active');
@@ -80,8 +84,15 @@ function Micro(workspace_div){
       // Build the editor
       let editor = $("<div class='active' data_id='"+id+"'>" + file.data + "</div>");
       activeTabPath = id;
-      // Add the created tab to the list
-      $('#micro_editorTabBar').prepend(tab);
+
+      // If there is no active tab, just prepend this tab.
+      if (prevActive.length == 0) {
+        // Add the created tab to the list
+        $('#micro_editorTabBar').prepend(tab);
+      } else {
+        // Add the created tab after the currently active tab
+        tab.insertAfter(prevActive);
+      }
 
       // Add the created editor
       $('#micro_editorContent').prepend(editor);
