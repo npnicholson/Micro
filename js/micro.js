@@ -498,9 +498,9 @@ function Micro(workspace_div){
         Object.entries(current).forEach(([key, val]) => {
           console.log(val);
           // Create a list item for the current layer
-          let current_layer = $('<li class="micro_file_element"></li>');
+          let current_layer = $('<li title="'+key+'" class="micro_file_element"></li>');
           // Create a title header for the current layer and append it
-          let text = $('<span title="'+key+'" class="micro_file_head_text">'+key+'<span>');
+          let text = $('<span class="micro_file_head_text">'+key+'<span>');
           let icon_holder = $('<div class="micro_file_head_title"></div>');
           let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
           this.sidebar_heads[val.path] = head;
