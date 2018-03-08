@@ -235,6 +235,8 @@ ul{
   height: 600px;
   position: relative;
   background-color: var(--micro_bg_dark)
+  padding:0;
+  margin:0;
 }
 
 #micro_header{
