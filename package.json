@@ -1,0 +1,30 @@
+{
+  "name": "Micro",
+  "description": "A full featured, web hosted text editor with syntax highlighting",
+  "version": "1.0.0",
+  "contributors": [
+    {
+      "name": "Keenan Nicholson",
+      "email": "",
+      "web": ""
+    },
+    {
+      "name": "Norris Nicholson",
+      "email": "",
+      "web": ""
+    }
+  ],
+  "dependencies": {
+    "https://github.com/ccampbell/mousetrap": "1.6.1"
+  },
+  "bugs": {
+    "web": "https://github.com/npnicholson/Micro/issues"
+  },
+  "repositories": [
+    {
+      "type": "git",
+      "url": "https://github.com/npnicholson/Micro.git"
+    }
+  ],
+  "homepage": "https://github.com/npnicholson/Micro"
+}
