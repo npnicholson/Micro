@@ -9,8 +9,8 @@ $( document ).ready(function(){
   micro = new Micro($('#micro_workspace'));
 
   // Set resize handle
-  $(window).resize(function(){
-    micro.updateSize();
+  $(window).resize(function(e){
+    micro.updateSize(e);
   });
 
 

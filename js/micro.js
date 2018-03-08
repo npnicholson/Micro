@@ -235,10 +235,18 @@ function Micro(workspace_div){
 
   /* UpdateSize
    * Call to update the window size.
+   * TODO: This method should update the resize handle percentages. Otherwise
+   *       if the user resizes until a pane reaches its min size, the other Pane
+   *       will drop below the first.
    */
-  this.updateSize = function(){
+  this.updateSize = function(e){
     console.log("Window size change");
     $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
+
+
+    micro_resizeVertical();
+    micro_resizeHorizontal();
+
   }
 
   /* SetInitFileSystem - Public
@@ -578,6 +586,7 @@ function Micro(workspace_div){
 
   /****************** initialization ******************/
 
+
   // ********** Resize Handle System ********** //
   // TODO: Needs major code review. There has to be a better way to do this
   // Resize Handle - Left and Right Panes
@@ -586,31 +595,7 @@ function Micro(workspace_div){
     dragging = 'vertical';
     $(document).unbind('mousemove');
     $(document).mousemove(function(e){
-      // ghostbar.css("left",e.pageX+2);
-      var percentage = (e.pageX / window.innerWidth) * 100;
-      if (percentage > 100)
-      percentage = 100;
-      else if (percentage < 0)
-      percentage = 0
-      var mainPercentage = 100-percentage;
-
-
-      // Limit further scaling after one of the edges has reached its min value
-      // (note the left bar has to factor in the width of the resize handle)
-      let minWidthLeft = parseFloat($('#micro_leftBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
-      let minWidthRight = parseFloat($('#micro_rightBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
-
-      if (percentage / 100 * window.innerWidth < minWidthLeft) {
-        percentage = minWidthLeft / window.innerWidth * 100;
-        var mainPercentage = 100-percentage;
-      } else if (mainPercentage / 100 * window.innerWidth < minWidthRight) {
-        mainPercentage = minWidthRight / window.innerWidth * 100;
-        var percentage = 100-mainPercentage;
-      }
-
-
-      $('#micro_leftBar').css("width",percentage + "%");
-      $('#micro_rightBar').css("width",mainPercentage + "%");
+      micro_resizeVertical();
     });
   });
 
@@ -620,90 +605,79 @@ function Micro(workspace_div){
     dragging = 'horizontal';
     $(document).unbind('mousemove');
     $(document).mousemove(function(e){
-      // ghostbar.css("left",e.pageX+2);
-      let top = $('#micro_rightBar')[0].offsetTop;
-      var percentage = (e.pageY - top) / ($('#micro_rightBar')[0].offsetHeight + top) * 100;
-
-      // Ensure we didnt drag way too far
-      if (percentage > 100)
-      percentage = 100;
-      else if (percentage < 0)
-      percentage = 0
-      var mainPercentage = 100-percentage;
-
-      // Stop the bottom from growing to 100% (and sticking out the bottom)
-      // when the top has hit its minimum size
-      let minHeightTop = parseFloat($('#micro_rightTop').css('min-height')) // undefined only when called from micro.js
-      let minHeightBottom = parseFloat($('#micro_rightBottom').css('min-height')) + parseFloat($('#micro_dragBarHorizontal').css('height'));
-      let clientHeight = $('#micro_rightBar')[0].clientHeight;
-      if (percentage/100 * clientHeight < minHeightTop) {
-        percentage = minHeightTop / clientHeight*100;
-        var mainPercentage = 100-percentage;
-      } else if (mainPercentage/100 * clientHeight < minHeightBottom) {
-        mainPercentage = minHeightBottom / clientHeight*100;
-        var percentage = 100-mainPercentage;
-      }
-
-      // Calculate the compliment percentage
-      var mainPercentage = 100-percentage;
-
-      $('#micro_rightTop').css("height",percentage + "%");
-      $('#micro_rightBottom').css("height",mainPercentage + "%");
+      micro_resizeHorizontal();
     });
   });
+
+  var micro_resizeVertical = function() {
+    var percentage = ((window.innerWidth - $('#micro_dragBarVertical').position().left)/ window.innerWidth) * 100;
+    console.log(percentage);
+    console.log($('#micro_dragBarVertical').position());
+    console.log(window.innerWidth);
+    console.log("---");
+    if (percentage > 100)
+    percentage = 100;
+    else if (percentage < 0)
+    percentage = 0
+    var mainPercentage = 100-percentage;
+
+
+    // Limit further scaling after one of the edges has reached its min value
+    // (note the left bar has to factor in the width of the resize handle)
+    let minWidthLeft = parseFloat($('#micro_leftBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
+    let minWidthRight = parseFloat($('#micro_rightBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
+
+    if (percentage / 100 * window.innerWidth < minWidthLeft) {
+      percentage = minWidthLeft / window.innerWidth * 100;
+      var mainPercentage = 100-percentage;
+    } else if (mainPercentage / 100 * window.innerWidth < minWidthRight) {
+      mainPercentage = minWidthRight / window.innerWidth * 100;
+      var percentage = 100-mainPercentage;
+    }
+
+    $('#micro_leftBar').css("width",percentage + "%");
+    $('#micro_rightBar').css("width",mainPercentage + "%");
+  }
+
+  var micro_resizeHorizontal = function() {
+    let top = $('#micro_rightBar')[0].offsetTop;
+    var percentage = ($('#micro_dragBarHorizontal')[0].offsetTop - top) / ($('#micro_rightBar')[0].offsetHeight + top) * 100;
+
+    // Ensure we didnt drag way too far
+    if (percentage > 100)
+    percentage = 100;
+    else if (percentage < 0)
+    percentage = 0
+    var mainPercentage = 100-percentage;
+
+    // Stop the bottom from growing to 100% (and sticking out the bottom)
+    // when the top has hit its minimum size
+    let minHeightTop = parseFloat($('#micro_rightTop').css('min-height')) // undefined only when called from micro.js
+    let minHeightBottom = parseFloat($('#micro_rightBottom').css('min-height')) + parseFloat($('#micro_dragBarHorizontal').css('height'));
+    let clientHeight = $('#micro_rightBar')[0].clientHeight;
+    if (percentage/100 * clientHeight < minHeightTop) {
+      percentage = minHeightTop / clientHeight*100;
+      var mainPercentage = 100-percentage;
+    } else if (mainPercentage/100 * clientHeight < minHeightBottom) {
+      mainPercentage = minHeightBottom / clientHeight*100;
+      var percentage = 100-mainPercentage;
+    }
+
+    // Calculate the compliment percentage
+    var mainPercentage = 100-percentage;
+
+    $('#micro_rightTop').css("height",percentage + "%");
+    $('#micro_rightBottom').css("height",mainPercentage + "%");
+  }
 
   // Draging mouse up - resize handles
   $(document).mouseup(function(e){
     $(document).unbind('mousemove');
     if (dragging === 'vertical') {
-      var percentage = (e.pageX / window.innerWidth) * 100;
-      if (percentage > 100)
-      percentage = 100;
-      else if (percentage < 0)
-      percentage = 0
-      var mainPercentage = 100-percentage;
-
-      // Limit further scaling after one of the edges has reached its min value
-      // (note the left bar has to factor in the width of the resize handle)
-      let minWidthLeft = parseFloat($('#micro_leftBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
-      let minWidthRight = parseFloat($('#micro_rightBar').css('min-width')) + parseFloat($('#micro_dragBarVertical').css('width'));
-
-      if (percentage / 100 * window.innerWidth < minWidthLeft) {
-        percentage = minWidthLeft / window.innerWidth * 100;
-        var mainPercentage = 100-percentage;
-      } else if (mainPercentage / 100 * window.innerWidth < minWidthRight) {
-        mainPercentage = minWidthRight / window.innerWidth * 100;
-        var percentage = 100-mainPercentage;
-      }
-
-      $('#micro_leftBar').css("width",percentage + "%");
-      $('#micro_rightBar').css("width",mainPercentage + "%");
+      micro_resizeVertical();
       dragging = 'none';
     } else if (dragging === 'horizontal') {
-      let top = $('#micro_rightBar')[0].offsetTop;
-      // Ensure we didnt drag way too far
-      if (percentage > 100)
-      percentage = 100;
-      else if (percentage < 0)
-      percentage = 0
-
-      // Stop the bottom from growing to 100% (and sticking out the bottom)
-      // when the top has hit its minimum size
-      let minHeightTop = parseFloat($('#micro_rightTop').css('min-height')) // undefined only when called from micro.js
-      let minHeightBottom = parseFloat($('#micro_rightBottom').css('min-height')) + parseFloat($('#micro_dragBarHorizontal').css('height'));
-      let clientHeight = $('#micro_rightBar')[0].clientHeight;
-      if (percentage/100 * clientHeight < minHeightTop) {
-        percentage = minHeightTop / clientHeight*100;
-        var mainPercentage = 100-percentage;
-      } else if (mainPercentage/100 * clientHeight < minHeightBottom) {
-        mainPercentage = minHeightBottom / clientHeight*100;
-        var percentage = 100-mainPercentage;
-      }
-
-      // Calculate the compliment percentage
-      var mainPercentage = 100-percentage;
-      $('#micro_rightTop').css("height",percentage + "%");
-      $('#micro_rightBottom').css("height",mainPercentage + "%");
+      micro_resizeHorizontal();
       dragging = 'none';
     } else if(dragging === 'tab'){
       console.log("Finished dragging a tab");
