@@ -1,7 +1,10 @@
-
-/* Micro Framework
- * Returns a new micro object, ready to be assigned to a div and configured
- */
+// ========================================================== //
+// micro.js :: Micro Framework
+//
+// TODO: Add fule description here
+// Returns a new micro object, ready to be assigned to a div
+// and configured
+// ========================================================== //
 
 var h;
 

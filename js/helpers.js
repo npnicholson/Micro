@@ -1,3 +1,9 @@
+// ========================================================== //
+// helpers.js :: Micro Helpers
+//
+// TODO: Add fule description here
+// ========================================================== //
+
 /* GetSystemInformation
  * Return an object with relivant system information
  */
