@@ -1,3 +1,9 @@
+// ========================================================== //
+// message.js :: Micro Framework Message Handle
+//
+// TODO: Add fule description here
+// ========================================================== //
+
 var socket_pass = getParameterByName('key');
 var socket_connected = false;
 var socket_refreshFileTree;
