@@ -42,7 +42,7 @@
 
 .file_handle::before{
   content:"\f0a3";
-  left: -60px;
+  left: -27px;
   top: 1px;
   position: absolute;
   font-size: 12px;
