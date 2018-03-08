@@ -1,5 +1,5 @@
 # Micro
-A full featured, web hosted text editor with syntax highlighting
+A full featured, web hosted text editor with syntax highlighting (under development)
 
 
 ## Simulation at Home
