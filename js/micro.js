@@ -275,13 +275,14 @@ function Micro(workspace_div){
    *       will drop below the first.
    */
   this.updateSize = function(e){
-    console.log("Window size change");
     $('#micro_file_scroll_holder').css('height',$('#micro_leftBarContent').height()-30);
 
-
+    // Recalculate the resize handles (to prevent div stacking)
     micro_resizeVertical(-1);
     micro_resizeHorizontal(-1);
 
+    // Sets the height of the workspace based on the height of the window
+    $('#micro_workspace').height(window.innerHeight - 40);
   }
 
   /* SetInitFileSystem - Public

@@ -27,7 +27,8 @@ html {
 }
 
 body{
-
+  /* Prevents overscrolling on MAC when there is no scroll bar */
+  overflow: hidden;
 }
 
 ul{
@@ -88,6 +89,7 @@ ul{
   font-weight: 400;
   font-size: 15px;
   -webkit-font-smoothing: antialiased;
+
 
   height:100%;
 
@@ -241,6 +243,7 @@ ul{
   background-color: var(--micro_bg_dark)
   padding:0;
   margin:0;
+  min-width: 300px;
 }
 
 #micro_header{
