@@ -56,7 +56,8 @@ function Micro(workspace_div){
   var addTab = function(file, id, head) {
 
     // Remember which tab was active before the add
-    var prevActive = $('#micro_editorTabBar .active');
+    var prevActiveTab = $('#micro_editorTabBar .active');
+    var prevActiveEditor = $('#micro_editorContent .active');
 
     // Set all current tabs to inactive
     $('#micro_editorTabBar .active').removeClass('active');
@@ -86,16 +87,21 @@ function Micro(workspace_div){
       activeTabPath = id;
 
       // If there is no active tab, just prepend this tab.
-      if (prevActive.length == 0) {
+      if (prevActiveTab.length == 0) {
         // Add the created tab to the list
         $('#micro_editorTabBar').prepend(tab);
+
+        // Add the created editor
+        $('#micro_editorContent').prepend(editor);
       } else {
         // Add the created tab after the currently active tab
-        tab.insertAfter(prevActive);
+        tab.insertAfter(prevActiveTab);
+
+        // Add the created editor after the currently active editor
+        editor.insertAfter(prevActiveEditor);
       }
 
-      // Add the created editor
-      $('#micro_editorContent').prepend(editor);
+
 
       // Set the tab's press callback (activates this tab)
       tab.mouseup(function() {
