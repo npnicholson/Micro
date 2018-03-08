@@ -222,11 +222,26 @@ function Micro(workspace_div){
       tab.unbind();
       tab_close.unbind();
 
+      // If the tab that is being closed is active, set the one before it to
+      // active
+      if (tab.hasClass('active')) {
+        // Find the ID of the previous tab
+        let targetID = tab.prev().attr("data_id");
+        // Set the tab as active
+        tab.prev().addClass('active');
+        // Set the editor as active
+        $('#micro_editorContent *[data_id="'+targetID+'"]').addClass('active');
+        // Highlight in the sidebar
+        activeTabPath = targetID;
+        highlightActive();
+      }
+
       // Remove the tab and editor
       tab.remove();
       editor.remove();
 
       numTabs--;
+
       // If there is no longer an active tab, set a new one to be active
       if (numTabs > 0 && $('#micro_editorTabBar .active').length == 0) {
         $('#micro_editorTabBar').children(':first').addClass('active');
