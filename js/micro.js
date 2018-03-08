@@ -332,6 +332,12 @@ function Micro(workspace_div){
     saveFile = handle;
     this.saveFile = handle;
   }
+
+  // Initial test for key binding
+  Mousetrap.bind('meta+s', function() {
+    console.log('Save Key Command');
+    return false;
+  });
   // Example:
   // funct = function(){micro.saveFile('file10.txt','save \'data\' here', function(e){console.log(e);})}
   // setTimeout(funct,2000);
