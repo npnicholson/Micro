@@ -38,6 +38,7 @@ function socketGetFileTree(callback){
     for(let i = 0; i < msg.data.length; i++){
       files.push(msg.data[i]);
     }
+    console.log(files);
     callback(files);
   }
   let id = makeid();
@@ -94,6 +95,7 @@ function getCallback(id){
 
 function processMessage(e){
   let msg = JSON.parse(e.data);
+  console.log(msg);
   /* Codes:
    * 0: Refused connection
    * 1: Sucessful process

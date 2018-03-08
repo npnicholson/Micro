@@ -253,6 +253,7 @@ ul{
   min-width: 80px;
   height: 100%;
   float: left;
+  position: relative;
 }
 
 #micro_leftBarContent{
@@ -269,6 +270,9 @@ ul{
   width: 5px;
   cursor: col-resize;
   border-right: 1px solid var(--micro_accent_dark);
+  position: absolute;
+  right: 0px;
+  z-index: 20;
 }
 
 #micro_rightBar{

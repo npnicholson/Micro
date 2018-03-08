@@ -177,6 +177,7 @@ function Micro(workspace_div){
       tab_close.mouseup(function() {
         if (dragging === 'none')
           removeTab(id);
+        removeBrightHighlight();
       });
 
       // Add to the number of tabs
@@ -371,12 +372,13 @@ function Micro(workspace_div){
   var updateFileTreeSidebar = function(tree){
     // Init the resulting file tree
     this.file_tree = {};
-    console.log(tree);
+    this.file_tree.children = {};
     this.sidebar_heads = {};
     // Loop through each file and split the path into an array of dirs and the end file
     tree.forEach(function(element) {
       element.pathArr = element.path.split('/');
     });
+
 
     // Init some variables
     let depth = 0;
@@ -407,20 +409,41 @@ function Micro(workspace_div){
           var cur = this.file_tree;
           // Loop through all dependant directories
           for(let j = 0; j < dependant_path.length; j++){
-            // If the directory does not exist, create it as an empty object
+            if(cur.children === undefined){
+              cur.children = {};
+            }
+            if(cur.children[dependant_path[j]] === undefined){
+              cur.children[dependant_path[j]] = {};
+            }
+            cur = cur.children[dependant_path[j]];
+            /*// If the directory does not exist, create it as an empty object
             if(cur[dependant_path[j]] === undefined){
               cur[dependant_path[j]] = {};
+              cur[dependant_path[j]].children = {};
+            }
+            if(cur.children[dependant_path[j]] === undefined){
+              cur.children[dependant_path[j]] = {};
+              cur.children[dependant_path[j]].children = {};
             }
             // Set the current directory inside the current directory
-            cur = cur[dependant_path[j]];
+            cur = cur[dependant_path[j]].children;*/
           }
+          if(cur.children === undefined){
+            cur.children = {};
+          }
+          cur.children[name] = ele;
           // Add the file to the directory that holds the file
-          cur[name] = ele;
+          /*console.log(cur);
+          console.log(this.file_tree);
+          console.log(ele);
+          cur.children[name] = ele;*/
         }
       }
       // Increase the depth
       depth ++;
     }
+
+    console.log(this.file_tree);
 
     // Create the DOM in the side bar //
 
@@ -444,25 +467,29 @@ function Micro(workspace_div){
       // Init an empty array for layers
       var layers = [];
       // Loop through every object in our current layer of the file tree
-      Object.entries(current).forEach(([key, val]) => {
-        // Create a list item for the current layer
-        let current_layer = $('<li class="micro_file_element"></li>');
-        // Create a title header for the current layer and append it
-        let text = $('<span class="micro_file_head_text">'+key+'<span>');
-        let icon_holder = $('<div class="micro_file_head_title"></div>');
-        let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
-        this.sidebar_heads[val.path] = head;
-        icon_holder.append(text);
-        head.append(icon_holder)
-        current_layer.append(head);
-        // Add to the index counter
-        indexCounter++;
-        // Push the current layer to the layer array, with some added information for ease
-        layers.push({html:current_layer, type:val.type, name:key, path:val.path});
-        // If the current layer is a directory, create an unordered list and add it
-        if(val.type !== "file")
-          fileDelve(val, $('<ul class="element_holder"></ul>').appendTo(current_layer));
-      });
+      if(current !== undefined && current !== null){
+        Object.entries(current).forEach(([key, val]) => {
+          console.log(val);
+          // Create a list item for the current layer
+          let current_layer = $('<li class="micro_file_element"></li>');
+          // Create a title header for the current layer and append it
+          let text = $('<span class="micro_file_head_text">'+key+'<span>');
+          let icon_holder = $('<div class="micro_file_head_title"></div>');
+          let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
+          this.sidebar_heads[val.path] = head;
+          icon_holder.append(text);
+          head.append(icon_holder)
+          current_layer.append(head);
+          // Add to the index counter
+          indexCounter++;
+          //console.log(val.type);
+          // Push the current layer to the layer array, with some added information for ease
+          layers.push({html:current_layer, type:val.type, name:key, path:val.path, children:val.children});
+          // If the current layer is a directory, create an unordered list and add it
+          if(val.type === "dir")
+            fileDelve(val.children, $('<ul class="element_holder"></ul>').appendTo(current_layer));
+        });
+      }
       // Initialize some arrays to hold directories and files
       let dirs = []
       let files = [];
@@ -472,7 +499,7 @@ function Micro(workspace_div){
       // Loop through the layer and find all directories and add them to the dir array
 
       for(let i = 0; i < layers.length; i++)
-        if(layers[i].type !== "file")
+        if(layers[i].type === "dir")
           dirs.push(layers[i]);
       // Loop through the layer and find all files and add them to the UpdateFileTreeSidebar array
       for(let i = 0; i < layers.length; i++)
@@ -490,33 +517,46 @@ function Micro(workspace_div){
       for(let i = 0; i < dirs.length; i++){
         // Get the head and save it for easy use
         let head = dirs[i].html.children('.micro_file_head');
+        let path = dirs[i].path;
         // Get the holder and save it for easy use
         let holder = dirs[i].html;
         // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
         head.children('.micro_file_head_title').addClass('octicon octicon-file-directory');
-        // Generate file handle span
-        let handle = $('<span class="file_handle"></span>');
-        head.children('.micro_file_head_title').append(handle);
         // Create the mousedown callback for this menu item
-        let isOpen = true;
-        dirs[i].html.children('.micro_file_head').mousedown(function(){
-          // Switch based on if the directory is open
-          if(isOpen){
-            // Set the file handle to closed
-            handle.addClass('file_handle_closed');
-            // Hide the elemets in this folder
-            holder.children('ul:first.element_holder').css('display','none');
-          }else{
-            // Set the file handle to open
-            handle.removeClass('file_handle_closed');
-            // Restore the elemets in this folder
-            holder.children('ul:first.element_holder').css('display','block');
-          }
-          // Toggle the open variable
-          isOpen = !isOpen;
-          // Set this element as selected
-          //setHighlight(head);
-        });
+        if(dirs[i].children === undefined){
+          // Directory is empty- treat it as an unopenable file
+          // Hide the elemets in this folder
+          holder.children('ul:first.element_holder').css('display','none');
+          // Define mousedown callback
+          dirs[i].html.children('.micro_file_head').mousedown(function(){
+            // Set this element as selected
+            setHighlight(path);
+          });
+        }else{
+          // Directory has children and therefore can be expanded
+          // Generate file handle span
+          let handle = $('<span class="file_handle"></span>');
+          head.children('.micro_file_head_title').prepend(handle);
+          let isOpen = true;
+          dirs[i].html.children('.micro_file_head').mousedown(function(){
+            // Switch based on if the directory is open
+            if(isOpen){
+              // Set the file handle to closed
+              handle.addClass('file_handle_closed');
+              // Hide the elemets in this folder
+              holder.children('ul:first.element_holder').css('display','none');
+            }else{
+              // Set the file handle to open
+              handle.removeClass('file_handle_closed');
+              // Restore the elemets in this folder
+              holder.children('ul:first.element_holder').css('display','block');
+            }
+            // Toggle the open variable
+            isOpen = !isOpen;
+            // Set this element as selected
+            setHighlight(path);
+          });
+        }
         // Add this element to the base DOM
         base.append(dirs[i].html);
       }
@@ -537,8 +577,13 @@ function Micro(workspace_div){
       }
     }
     // Enter the recursive function and add all files to the DOM
-    fileDelve(this.file_tree, $('<ul class="micro_file_tree"></ul>').appendTo(container));
+    fileDelve(this.file_tree.children, $('<ul class="micro_file_tree"></ul>').appendTo(container));
     top_level.prepend('<div id="project_title">Project</div>');
+
+    let treeHighlighted = this.treeHighlighted;
+    $('#micro_rightBar').mousedown(function(){
+        removeBrightHighlight();
+    });
 
     // Update the highlight for the file tree
     highlightActive();
@@ -569,6 +614,9 @@ function Micro(workspace_div){
   var removeBrightHighlight = function(){
     $('.selected.bright').removeClass('bright');
     this.treeHighlighted = false;
+    if(activeTabPath === undefined){
+      $('.micro_file_head').removeClass('selected bright');
+    }
   }
 
   // Increases any file tree highlights to bright
