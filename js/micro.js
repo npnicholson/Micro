@@ -57,7 +57,6 @@ function Micro(workspace_div){
   // TODO: Look into optimizations that can be made here, especially with the
   //       dragging system
   var addTab = function(file, id, head) {
-
     // Remember which tab was active before the add
     var prevActiveTab = $('#micro_editorTabBar .active');
     var prevActiveEditor = $('#micro_editorContent .active');
@@ -81,8 +80,9 @@ function Micro(workspace_div){
       // If the tab does not already exist, make one.
       // Add the new tab to the start. Go ahead and set it to active
       let iconClass = getIconType(file.name);
-      let tab = $("<li class='active' draggable='true' data_id='"+id+"'><div class='header "+iconClass+"'><span class='tab_name'>"
-        + file.name + "</span></div><div class='tab_close'></div></li>");
+      let tab = $("<li class='active' draggable='true'><div class='header "+iconClass+"'><span class='tab_name'></span></div><div class='tab_close'></div></li>");
+      tab.find('span').text(file.name);
+      tab.attr('data_id',id);
       let tab_close = tab.children('.tab_close');
 
       // Build the editor
@@ -407,7 +407,7 @@ function Micro(workspace_div){
       let callback = function(data){
         addTab(data, filepath);
       }
-      loadFile(filepath, callback);
+      loadFile(restore(filepath), callback);
     }
   }
 
@@ -424,6 +424,10 @@ function Micro(workspace_div){
     // Loop through each file and split the path into an array of dirs and the end file
     tree.forEach(function(element) {
       element.pathArr = element.path.split('/');
+      for(let i = 0; i < element.pathArr.length; i++){
+        element.pathArr[i] = clean(element.pathArr[i]);
+      }
+      element.path = clean(element.path);
     });
 
 
@@ -516,7 +520,6 @@ function Micro(workspace_div){
       // Loop through every object in our current layer of the file tree
       if(current !== undefined && current !== null){
         Object.entries(current).forEach(([key, val]) => {
-          console.log(val);
           // Create a list item for the current layer
           let current_layer = $('<li title="'+key+'" class="micro_file_element"></li>');
           // Create a title header for the current layer and append it
