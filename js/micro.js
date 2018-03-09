@@ -31,7 +31,7 @@ function Micro(workspace_div){
     editor.text(fileData);
   };
 
-  var activeTabPath = undefined;
+  var activeTabID = undefined;
   var activateTab = function(id) {
     $('#micro_editorTabBar .active').removeClass('active');
     $('#micro_editorContent .active').removeClass('active');
@@ -39,7 +39,7 @@ function Micro(workspace_div){
     let editor = $('#micro_editorContent *[data_id="'+id+'"]');
     tab.addClass('active');
     editor.addClass('active');
-    activeTabPath = id;
+    activeTabID = id;
   }
 
   // Get a reference to the tab divider (used for dragging). If one does not
@@ -74,7 +74,7 @@ function Micro(workspace_div){
 
       tab.addClass('active');
       editor.addClass('active');
-      activeTabPath = id;
+      activeTabID = id;
 
     } else {
       // If the tab does not already exist, make one.
@@ -87,7 +87,7 @@ function Micro(workspace_div){
 
       // Build the editor
       let editor = $("<div class='active' data_id='"+id+"'>" + file.data + "</div>");
-      activeTabPath = id;
+      activeTabID = id;
 
       // If there is no active tab, just prepend this tab.
       if (prevActiveTab.length == 0) {
@@ -117,7 +117,7 @@ function Micro(workspace_div){
         $('#micro_editorContent .active').removeClass('active');
         tab.addClass('active');
         editor.addClass('active');
-        activeTabPath = id;
+        activeTabID = id;
 
         // Re-enable the transition. OffsetHeight used to flush the CSS changes
         tab_close[0].offsetHeight;
@@ -235,7 +235,7 @@ function Micro(workspace_div){
         // Set the editor as active
         $('#micro_editorContent *[data_id="'+targetID+'"]').addClass('active');
         // Highlight in the sidebar
-        activeTabPath = targetID;
+        activeTabID = targetID;
         highlightActive();
       }
 
@@ -249,14 +249,14 @@ function Micro(workspace_div){
       if (numTabs > 0 && $('#micro_editorTabBar .active').length == 0) {
         $('#micro_editorTabBar').children(':first').addClass('active');
         $('#micro_editorContent').children(':first').addClass('active');
-        activeTabPath = $('#micro_editorTabBar li.active').attr('data_id');
+        activeTabID = $('#micro_editorTabBar li.active').attr('data_id');
         highlightActive();
       }
 
       if (numTabs === 0) {
         // If there are no more tabs, hide the tab right bar
         $(micro_editorTabBarEnd).addClass('hidden');
-        activeTabPath = undefined;
+        activeTabID = undefined;
       }
 
     }
@@ -388,24 +388,26 @@ function Micro(workspace_div){
     console.error(error);
   }
 
+
+
   /* OpenFile  - Public
    * Opens a file in the editor. Accepts a file path.
    */
-  var openFile = function(filepath){
-
+  var openFile = function(file_id){
+    let filepath = this.file_ids[file_id];
     // Check if we already have a Tab at the filepath
-    if ($('#micro_editorTabBar *[data_id="'+filepath+'"]').length !== 0) {
+    if ($('#micro_editorTabBar *[data_id="'+file_id+'"]').length !== 0) {
       $('#micro_editorTabBar .active').removeClass('active');
       $('#micro_editorContent .active').removeClass('active');
 
       // If it does exist, set it to active instead of making a new one
-      let tab = $('#micro_editorTabBar *[data_id="'+filepath+'"]');
-      let editor = $('#micro_editorContent *[data_id="'+filepath+'"]');
+      let tab = $('#micro_editorTabBar *[data_id="'+file_id+'"]');
+      let editor = $('#micro_editorContent *[data_id="'+file_id+'"]');
       tab.addClass('active');
       editor.addClass('active');
     } else {
       let callback = function(data){
-        addTab(data, filepath);
+        addTab(data, file_id);
       }
       loadFile(restore(filepath), callback);
     }
@@ -413,6 +415,7 @@ function Micro(workspace_div){
 
   this.openFile = openFile;
   this.sidebar_heads = {};
+  this.file_ids = {};
   /* UpdateFileTreeSidebar  - Private
    * Updates the sidebar to include the current files and directories
    */
@@ -421,6 +424,7 @@ function Micro(workspace_div){
     this.file_tree = {};
     this.file_tree.children = {};
     this.sidebar_heads = {};
+    this.file_ids = {};
     // Loop through each file and split the path into an array of dirs and the end file
     tree.forEach(function(element) {
       element.pathArr = element.path.split('/');
@@ -467,27 +471,11 @@ function Micro(workspace_div){
               cur.children[dependant_path[j]] = {};
             }
             cur = cur.children[dependant_path[j]];
-            /*// If the directory does not exist, create it as an empty object
-            if(cur[dependant_path[j]] === undefined){
-              cur[dependant_path[j]] = {};
-              cur[dependant_path[j]].children = {};
-            }
-            if(cur.children[dependant_path[j]] === undefined){
-              cur.children[dependant_path[j]] = {};
-              cur.children[dependant_path[j]].children = {};
-            }
-            // Set the current directory inside the current directory
-            cur = cur[dependant_path[j]].children;*/
           }
           if(cur.children === undefined){
             cur.children = {};
           }
           cur.children[name] = ele;
-          // Add the file to the directory that holds the file
-          /*console.log(cur);
-          console.log(this.file_tree);
-          console.log(ele);
-          cur.children[name] = ele;*/
         }
       }
       // Increase the depth
@@ -525,16 +513,26 @@ function Micro(workspace_div){
           // Create a title header for the current layer and append it
           let text = $('<span class="micro_file_head_text">'+key+'<span>');
           let icon_holder = $('<div class="micro_file_head_title"></div>');
-          let head = $('<div class="micro_file_head" data_path="'+val.path+'" data_index="'+indexCounter+'"></div>');
-          this.sidebar_heads[val.path] = head;
+          let head = $('<div class="micro_file_head"></div>');
+          // Create an ID for this file using an MD5 hash of the file name. This
+          // allows the file ID to be the same if there is a file update or tree
+          // refresh.
+          let id = MD5(val.path);
+          // Apply this head using the id
+          this.sidebar_heads[id] = head;
+          // Add the path to the id list
+          this.file_ids[id] = val.path;
+          // Append the text div to the icon holder
           icon_holder.append(text);
+          // Append the icon holder to the head
           head.append(icon_holder)
+          // Append the head to the current layer
           current_layer.append(head);
           // Add to the index counter
           indexCounter++;
           //console.log(val.type);
           // Push the current layer to the layer array, with some added information for ease
-          layers.push({html:current_layer, type:val.type, name:key, path:val.path, children:val.children});
+          layers.push({html:current_layer, type:val.type, name:key, path:val.path, id:id ,children:val.children});
           // If the current layer is a directory, create an unordered list and add it
           if(val.type === "dir")
             fileDelve(val.children, $('<ul class="element_holder"></ul>').appendTo(current_layer));
@@ -568,6 +566,7 @@ function Micro(workspace_div){
         // Get the head and save it for easy use
         let head = dirs[i].html.children('.micro_file_head');
         let path = dirs[i].path;
+        let id = dirs[i].id;
         // Get the holder and save it for easy use
         let holder = dirs[i].html;
         // Add the directory class and folder icon. TODO: Link the icon to the helper function somehow
@@ -580,7 +579,7 @@ function Micro(workspace_div){
           // Define mousedown callback
           dirs[i].html.children('.micro_file_head').mousedown(function(){
             // Set this element as selected
-            setHighlight(path);
+            setHighlight(id);
           });
         }else{
           // Directory has children and therefore can be expanded
@@ -604,7 +603,7 @@ function Micro(workspace_div){
             // Toggle the open variable
             isOpen = !isOpen;
             // Set this element as selected
-            setHighlight(path);
+            setHighlight(id);
           });
         }
         // Add this element to the base DOM
@@ -615,12 +614,13 @@ function Micro(workspace_div){
         // Get the head and save it for easy use
         let head = files[i].html.children('.micro_file_head');
         let path = files[i].path;
+        let id = files[i].id;
         // Add the icon to the title div
         head.children('.micro_file_head_title').addClass(getIconType(path));
         // Create the mousedown callback for this menu item
         files[i].html.children('.micro_file_head').mousedown(function(){
-          openFile(path);
-          setHighlight(path);
+          openFile(id);
+          setHighlight(id);
         });
         // Add this element to the base DOM
         base.append(files[i].html);
@@ -640,11 +640,11 @@ function Micro(workspace_div){
   }
 
   var highlightActive = function(){
-    if(activeTabPath !== undefined){
+    if(activeTabID !== undefined){
       if(this.treeHighlighted){
-        setHighlight(activeTabPath);
+        setHighlight(activeTabID);
       }else{
-        setHighlight(activeTabPath);
+        setHighlight(activeTabID);
         removeBrightHighlight();
       }
     }
@@ -652,10 +652,10 @@ function Micro(workspace_div){
 
   this.treeHighlighted = false;
   // Sets the element passed in as highlighted
-  var setHighlight = function(path){
-    if(this.sidebar_heads[path] !== undefined){
+  var setHighlight = function(id){
+    if(this.sidebar_heads[id] !== undefined){
       $('.micro_file_head').removeClass('selected bright');
-      this.sidebar_heads[path].addClass('selected bright');
+      this.sidebar_heads[id].addClass('selected bright');
       this.treeHighlighted = true;
     }
   }
@@ -664,7 +664,7 @@ function Micro(workspace_div){
   var removeBrightHighlight = function(){
     $('.selected.bright').removeClass('bright');
     this.treeHighlighted = false;
-    if(activeTabPath === undefined){
+    if(activeTabID === undefined){
       $('.micro_file_head').removeClass('selected bright');
     }
   }
