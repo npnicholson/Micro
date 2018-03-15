@@ -104,8 +104,6 @@ function Micro(workspace_div) {
         editor.insertAfter(prevActiveEditor);
       }
 
-
-
       // Set the tab's press callback (activates this tab)
       tab.mouseup(function() {
 
