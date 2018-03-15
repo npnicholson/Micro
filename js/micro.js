@@ -86,7 +86,7 @@ function Micro(workspace_div){
       let tab_close = tab.children('.tab_close');
 
       // Build the editor
-      let editor = $("<div class='active' data_id='"+id+"'>" + file.data + "</div>");
+      let editor = $("<div class='active' data_id='"+id+"'><code>" + file.data + "</code></div>");
       activeTabPath = id;
 
       // If there is no active tab, just prepend this tab.
@@ -268,6 +268,7 @@ function Micro(workspace_div){
 
   // Get system information
   this.system = getSystemInformation();
+
 
   /**************** Personal Functions ****************/
 
@@ -796,6 +797,8 @@ function Micro(workspace_div){
     }
   });
   // ********** Resize Handle System End ********** //
+
+  this.updateSize();
 
   micro_count ++;
   return this;
