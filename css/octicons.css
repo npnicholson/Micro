@@ -35,6 +35,23 @@
   speak: none;
 }
 
+/* Used for file tree icons */
+.file_handle{
+  position:relative;
+}
+
+.file_handle::before{
+  content:"\f0a3";
+  left: -27px;
+  top: 1px;
+  position: absolute;
+  font-size: 12px;
+}
+
+.file_handle_closed::before{
+  content:"\f078";
+}
+
 .mega-octicon { font-size: 32px; }
 
 .octicon-alert:before { content:"\f02d"; }

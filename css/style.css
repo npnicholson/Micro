@@ -16,14 +16,19 @@ font-family: 'Open Sans', sans-serif;
 font-family: 'Roboto', sans-serif;
 */
 
-
-
-html{
-  --micro_editorTabWidth: 33.33333333%;
+html {
+  --micro_bg_dark: #21252b;
+  --micro_bg_light: #282c34;
+  --micro_accent_dark: #181a1f;
+  --micro_highlight_1: #568af2;
+  --micro_highlight_2: #5f8e6f;
+  --micro_text_dark: rgba(157, 165, 180, 0.6);
+  --micro_text_light: #d7dae0;
 }
 
 body{
-
+  /* Prevents overscrolling on MAC when there is no scroll bar */
+  overflow: hidden;
 }
 
 ul{
@@ -46,11 +51,14 @@ ul{
 *  Right Bar (bot Content) id    4   micro_rightBottomContent
 *
 *  File Tree               class     micro_file_tree
+*  File Tree Scroll Pane   id        micro_file_scroll_holder
 *  File Tree Element       class     micro_file_element
 *  File Tree Element Icon  class     micro_file_element_icon
 *  File Tree Header        class     micro_file_head
 *  File Tree Header Text   class     micro_file_head_text
 *  File Tree Children      class     micro_file_children
+
+*  Project Title           id        project_title
 *  Footer region      id    1   micro_footer
 
 ***  OTHER  ***
@@ -68,37 +76,174 @@ ul{
 }
 */
 
+/* Content holder - Top level div that holds all of the editors*/
+#micro_editorContent{
+
+}
+/* Editors - each editor themselves*/
+#micro_editorContent div{
+
+  padding: 0px 10px 0px 10px;
+  display:none;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+
+
+  height:100%;
+
+  overflow: hidden;
+
+  background-color: var(--micro_bg_light);
+  color: var(--micro_text_light);
+}
+
+/* Styles unique to the active editor */
+#micro_editorContent div.active{
+  display:block;
+}
+
+#micro_editorTabBarEnd{
+    height: 30px;
+    background-color: var(--micro_bg_dark);
+    float: right;
+    display: block;
+    width: 100%;
+    min-width: 0px;
+    overflow: hidden;
+    flex-shrink: 2;
+    border-left: 1px solid var(--micro_accent_dark);
+    box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
+}
+
+#micro_editorTabBarEnd.hidden{
+    display:none;
+}
+
+#micro_editorTabBar li.divider{
+  width: 0;
+  min-width: 0px;
+  border-left: none;
+  z-index: 1;
+}
+
+#micro_editorTabBar li.divider div{
+  position: absolute;
+  display: block;
+  background-color: var(--micro_highlight_2);
+  height: 30px;
+  width: 4px;
+  transform: translateX(-2px);
+}
+
+
 #micro_editorTabBar li{
     float: left;
+    width: 100%;
+    min-width: 85px;
+    max-width: 255px;
+    border-left: 1px solid var(--micro_accent_dark);
+    box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
+    color: var(--micro_text_dark);
+    position:relative;
+    background-color: var(--micro_bg_dark);
 
-    width: var(--micro_editorTabWidth);
-    min-width: 75px;
-    border-left: 1px solid #181a1f;
-    box-shadow: inset 0 -1px 0 #181a1f;
-    color: rgba(157, 165, 180, 0.6);
+    height:100%;
 }
 
 #micro_editorTabBar li:first-child{
   border-left-color: transparent;
 }
 
-#micro_editorTabBar li > div{
+/* TODO: The last-child border needs to be somehow reset to the tab that is
+         at the end. Otherwise there is no vertical line */
+/* #micro_editorTabBar li:last-child{
+  border-right: 1px solid var(--micro_accent_dark);
+} */
+
+
+#micro_editorTabBar li .header {
+  /* position: relative;
+  transform: translate(100%,50%); */
   text-align: center;
-  padding: 3px 8px 3px 8px;
+  display: block;
+  margin: 6px 6px 0px 6px;
+  overflow: hidden;
+  white-space: pre;
+  text-overflow: ellipsis;
+}
+
+#micro_editorTabBar li .header .tab_name{
+  text-align: center;
+  padding: 4px 8px 0px 8px;
+  /* display: block; */
+
+  font-family: 'Open Sans', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  -webkit-font-smoothing: antialiased;
+}
+
+#micro_editorTabBar li:hover .tab_close{
   display: block;
 }
 
-.micro_tabActive{
+#micro_editorTabBar li .tab_close{
+  display: none;
+  height: 20px;
+  width: 20px;
+  position: absolute;
+  right: 10px;
+  top: 5px;
+  background-color: inherit;
+  border-radius: 3px;
+  color: var(--micro_text_light);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#micro_editorTabBar li .tab_close:hover{
+  background-color: var(--micro_highlight_1);
+  color: var(--micro_accent_dark);
+}
+
+/* #micro_editorTabBar:hover li .tab_close::before{
+  display: inline-block;
+} */
+
+#micro_editorTabBar li .tab_close::before{
+  font: normal normal normal 16px/1 Octicons;
+  display: inline-block;
+  text-decoration: none;
+  text-rendering: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  speak: none;
+  content:"\f081";
+  position:absolute;
+
+  left:5px;
+  top:2px;
+}
+
+#micro_editorTabBar li.active {
   box-shadow: none !important;
   background-color: #282c34;
-  color: #d7dae0 !important;
+  color: var(--micro_text_light) !important;
+  font-weight: 600;
 }
 
 #micro_workspace{
   width: 100%;
-  height: 400px;
+  height: 600px;
   position: relative;
-  background-color: #FF0000;
+  background-color: var(--micro_bg_dark)
+  padding:0;
+  margin:0;
+  min-width: 300px;
 }
 
 #micro_header{
@@ -112,64 +257,78 @@ ul{
 }
 
 #micro_leftBar{
-  background-color: #21252b;
-  width: 25%;
+  background-color: var(--micro_bg_dark);
+  width: 22%;
   min-width: 80px;
   height: 100%;
   float: left;
+  position: relative;
 }
 
 #micro_leftBarContent{
   width: auto;
   height: 100%;
   overflow: hidden;
+  position: relative;
 }
 
 #micro_dragBarVertical {
-  background-color:black;
+  background-color:transparent;
   height:100%;
   float: right;
-  width: 2px;
+  width: 5px;
   cursor: col-resize;
+  border-right: 1px solid var(--micro_accent_dark);
+  position: absolute;
+  right: 0px;
+  z-index: 20;
 }
 
 #micro_rightBar{
-  width: 75%;
+  width: 78%;
   min-width: 80px;
   height: 100%;
   float: right;
 }
 
 #micro_rightTop{
-  background-color: #282c34;
+  background-color: var(--micro_bg_light);
   width: 100%;
-  height: 50%;
+  height: 90%;
   min-height: 20px;
+  /* overflow-y: hidden; */
 }
 
 #micro_editorTabBar{
-  background-color: #21252b;
+  background-color: var(--micro_bg_dark);
   list-style-type: none;
   margin: 0;
   padding: 0;
+  height: 30px;
   overflow: hidden;
   display:flex;
-  /* box-shadow: inset 0 -1px 0 black; */
+  box-shadow: inset 0 -1px 0 var(--micro_accent_dark);
 }
 
 #micro_dragBarHorizontal {
-  background-color:black;
+  background-color:transparent;
   width:100%;
   height: 2px;
   cursor: row-resize;
+  border-top: 1px solid var(--micro_accent_dark);
 }
 
 
 #micro_rightBottom{
-  background-color: #FF00FF;
+  background-color: var(--micro_accent_dark);
+  color: white;
   width: 100%;
-  height: 50%;
+  height: 10%;
   min-height: 20px;
+
+  /* TODO Look at this more */
+  overflow:scroll;
+
 }
 
 #micro_rightBottomContent{
@@ -178,7 +337,7 @@ ul{
 }
 
 #micro_footer {
-  background-color: #000FFF;
+  background-color: var(--micro_highlight_1);
   height: 25px;
 }
 
@@ -188,9 +347,18 @@ ul{
 }
 
 .micro_file_tree{
-  padding-left: 5px;
+  padding-left: 15px;
   margin-top: 0px;
   color: #9da5b4;
+  position: relative;
+  margin-bottom: 7px;
+}
+
+#micro_file_scroll_holder{
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .micro_file_tree ul{
@@ -198,24 +366,51 @@ ul{
 }
 
 .micro_file_element{
-  margin-top: 10px;
+  margin-top: 0px;
 }
 
 .micro_file_head{
-  /*background-color: #FF0000;*/
   padding-left: 5px;
   top:1px;
+  width: 100%;
+  height: 26px;
+  /*z-index: 1;*/
+  color: #9da5b4;
+}
+
+.micro_file_head.selected{
+  color: #fff;
+}
+
+.micro_file_head.selected:before{
+  background-color: #3a3f4b;
+  position: absolute;
+  left: 0;
+  right: 0;
+  height:26px;
+  content: '';
+  z-index: 0;
+}
+
+.micro_file_head.selected.bright:before{
+  background-color: var(--micro_highlight_1);
+}
+
+.micro_file_head_title{
   position: relative;
+  z-index: 1;
+  padding-top: 6px;
 }
 
 .micro_file_head_text{
   font-family: 'Open Sans', sans-serif;
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: 400;
+  font-size: 13px;
   -webkit-font-smoothing: antialiased;
   text-align: left;
-  color: #9da5b4;
   padding-left: 5px;
+  white-space: nowrap;
+  overflow: hidden;
 }
 
 .micro_file_head.dir::before{
@@ -225,6 +420,20 @@ ul{
 
 .micro_file_children{
   display: inline-grid;
+  width: 100%;
+}
+
+#project_title{
+  width: 100%;
+  height: 30px;
+  font-family: 'Roboto';
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  line-height: 24px;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  color: #FFF;
 }
 
 /* ******* OTHER ******* */
@@ -237,6 +446,23 @@ ul{
   -ms-user-select: none; /* Internet Explorer/Edge */
   user-select: none; /* Non-prefixed version, currently
   supported by Chrome and Opera */
+}
+
+.notransition {
+  -webkit-transition: none !important;
+  -moz-transition: none !important;
+  -o-transition: none !important;
+  transition: none !important;
+}
+
+[draggable] {
+  -moz-user-select: none;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  /* Required to make elements draggable in old WebKit */
+  -khtml-user-drag: element;
+  -webkit-user-drag: element;
 }
 
 /* Changes css items based on media actions */

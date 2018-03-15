@@ -5,9 +5,13 @@
   <meta charset="utf-8">
   <link rel="stylesheet" type="text/css" href="css/style.css">
   <link rel="stylesheet" type="text/css" href="css/octicons.css">
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,600,600i|Roboto:100,300,300i,400,700,700i" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,500,600,600i|Roboto:100,300,300i,400,700,700i" rel="stylesheet">
   <script type="text/javascript" src="jquery/3.2.1.jquery.min.js"></script>
+  <script type="text/javascript" src="js/mousetrap.min.js"></script>
+  <script type="text/javascript" src="js/md5.js"></script>
   <script type="text/javascript" src="js/helpers.js"></script>
+  <script type="text/javascript" src="js/keys.js"></script>
+  <script type="text/javascript" src="js/message.js"></script>
   <script type="text/javascript" src="js/micro.js"></script>
   <script type="text/javascript" src="js/script.js"></script>
   <title>Micro</title>
@@ -16,27 +20,30 @@
 <body>
 
   <div id="micro_workspace">
-    <div id="micro_header" class="noselect">
+    <div id="micro_header" class="noselect" style="display: none;">
       Header Content
     </div>
     <div id="micro_horizontal">
       <div id="micro_leftBar">
         <div id="micro_dragBarVertical"></div>
         <div id="micro_leftBarContent" class="noselect">
-          Left Bar Content
+          <div id="project_title">No Connection</div>
         </div>
       </div>
 
       <div id="micro_rightBar">
-        <div id="micro_rightTop" >
-          <!-- <div style="overflow: hidden; height: 24px; background-color: #123456;" class="noselect">  -->
-            <ul id="micro_editorTabBar" class="noselect">
-              <li><div>KeEnAn.sux</div></li>
-              <li class="micro_tabActive"><div>Tab 2</div></li>
-              <li><div>Tab 3</div></li>
-            </ul>
-          <!-- </div> -->
-          Right Top Content
+        <div id="micro_rightTop">
+          <ul id="micro_editorTabBar" class="noselect">
+            <!-- New tabs are added under this UL  -->
+
+            <div id=micro_editorTabBarEnd class="hidden"> </div>
+            <!-- This tab end bar remains at the right side -->
+          </ul>
+          <div style="overflow:scroll; height:100%;">
+            <div id="micro_editorContent">
+              <!-- New editors are added under this DIV  -->
+            </div>
+          </div>
         </div>
         <div id="micro_rightBottom">
           <div id="micro_dragBarHorizontal"></div>
