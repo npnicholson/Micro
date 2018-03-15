@@ -148,7 +148,7 @@ ul{
     color: var(--micro_text_dark);
     position:relative;
     background-color: var(--micro_bg_dark);
-
+    /* transition: width 0.2s; */
     height:100%;
 }
 

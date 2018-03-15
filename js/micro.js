@@ -262,6 +262,34 @@ function Micro(workspace_div) {
     }
   }
 
+  // Tab resize managers
+  var micro_tabBarOver = false;
+  $('#micro_editorTabBar').mouseenter(function() {
+    if (!micro_tabBarOver) {
+      micro_freezeTabs();
+    }
+    micro_tabBarOver = true
+  });
+
+  $('#micro_editorTabBar').mouseleave(function() {
+    setTimeout(function() {
+      if (!micro_tabBarOver) {
+        micro_unfreezeTabs();
+      }
+    },500);
+    micro_tabBarOver = false
+  });
+
+  var micro_freezeTabs = function() {
+    $('#micro_editorTabBarEnd').width($('#micro_editorTabBarEnd').width());
+    $('#micro_editorTabBar li').width($('#micro_editorTabBar li').width());
+  }
+
+  var micro_unfreezeTabs = function() {
+    $('#micro_editorTabBar li').width('100%');
+    $('#micro_editorTabBarEnd').width('100%');
+  }
+
   /**************** End Tab Manager ****************/
 
   this.workspace = workspace_div;
@@ -807,6 +835,7 @@ function Micro(workspace_div) {
     }
   });
   // ********** Resize Handle System End ********** //
+
 
   this.updateSize();
 
